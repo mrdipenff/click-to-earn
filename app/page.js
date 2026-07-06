@@ -27,50 +27,59 @@ export default function App() {
   
   const [longUrl, setLongUrl] = useState('');
   const [generatedLink, setGeneratedLink] = useState('');
-  const [userLinks, setUserLinks] = useState([]);
+  
+  // Storage Lists
+  const [homeLinks, setHomeLinks] = useState([]); // Home Page history (Non-logged in)
+  const [userLinks, setUserLinks] = useState([]); // Console database history
+  
   const [stats, setStats] = useState({ clicks: 0, earnings: 0.00 });
   const [adminStats, setAdminStats] = useState({ totalUsers: 1, totalClicks: 1490 });
-  const [isRedirecting, setIsRedirecting] = useState(false);
+  
+  // High-CPM Payout Ad Screen States
+  const [adScreenActive, setAdScreenActive] = useState(false);
+  const [countdown, setCountdown] = useState(10);
+  const [targetDestination, setTargetDestination] = useState('');
 
-  // 🚀 Absolute Direct Redirect Engine (Using Direct URL Parsing)
+  // 🚀 Bulletproof Adsterra Timer Logic Injection
   useEffect(() => {
-    const handleRedirect = async () => {
-      if (typeof window !== 'undefined') {
-        const urlParams = new URLSearchParams(window.location.search);
-        const goParam = urlParams.get('go');
-        const destParam = urlParams.get('dest');
-        
-        if (goParam && destParam) {
-          setIsRedirecting(true);
-          try {
-            const decodedUrl = atob(destParam);
-            
-            // Increment click logic inside Firestore
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const goParam = urlParams.get('go');
+      const destParam = urlParams.get('dest');
+      
+      if (goParam && destParam) {
+        try {
+          const decodedUrl = atob(destParam);
+          setTargetDestination(decodedUrl);
+          setAdScreenActive(true);
+
+          const logClick = async () => {
             const q = query(collection(db, "links"), where("alias", "==", goParam));
             const querySnapshot = await getDocs(q);
-            
             if (!querySnapshot.empty) {
               const linkDoc = querySnapshot.docs[0];
-              const currentClicks = linkDoc.data().clicks || 0;
-              
               await updateDoc(doc(db, "links", linkDoc.id), {
-                clicks: currentClicks + 1
+                clicks: (linkDoc.data().clicks || 0) + 1
               });
             }
-            
-            // Direct Hard Redirect to original URL
-            window.location.replace(decodedUrl);
-          } catch (err) {
-            console.error("Redirection tracking failed:", err);
-            setIsRedirecting(false);
-          }
+          };
+          logClick();
+        } catch (err) {
+          console.error("Link parsing handshake aborted:", err);
         }
       }
-    };
-    handleRedirect();
+    }
   }, []);
 
-  // Sync Secure User Auth Token State
+  // Countdown timer processing matrix
+  useEffect(() => {
+    if (adScreenActive && countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [adScreenActive, countdown]);
+
+  // Monitor Auth Tokens Session
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
@@ -99,7 +108,7 @@ export default function App() {
       setUserLinks(links);
       setStats({ clicks: totalClicks, earnings: totalClicks * 0.006 });
     } catch (e) {
-      console.log("Firestore matrix sync ready.");
+      console.log("Firestore framework mapped cleanly.");
     }
   };
 
@@ -127,40 +136,76 @@ export default function App() {
   };
 
   const handleShorten = async (context) => {
-    if (!longUrl) return alert("Enter valid URL!");
+    if (!longUrl) return alert("Enter valid URL address!");
     const currentHost = window.location.origin;
     const shortAlias = Math.random().toString(36).substring(2, 7);
     const shortUrl = `${currentHost}?go=${shortAlias}&dest=${btoa(longUrl)}`;
+
+    const newLinkObject = {
+      originalUrl: longUrl,
+      shortUrl: shortUrl,
+      alias: shortAlias,
+      clicks: 0
+    };
 
     if (user && context === 'dash') {
       try {
         await addDoc(collection(db, "links"), {
           userId: user.uid,
-          originalUrl: longUrl,
-          shortUrl: shortUrl,
-          alias: shortAlias,
-          clicks: 0
+          ...newLinkObject
         });
-        setLongUrl('');
         fetchUserData(user);
-        alert("Monetized link generated!");
+        setLongUrl(''); // Input box clear!
+        alert("Monetized link appended to cloud database!");
       } catch (e) {
-        alert("Database error.");
+        alert("Database cluster mapping error.");
       }
     } else {
+      // Home page local history array push loop
+      setHomeLinks([newLinkObject, ...homeLinks]);
       setGeneratedLink(shortUrl);
+      setLongUrl(''); // Input box clear!
     }
   };
 
-  if (isRedirecting) {
+  // ================= 💸 VIEW: DYNAMIC HIGH-CPM AD SCREEN LOOP =================
+  if (adScreenActive) {
     return (
-      <div style={{ backgroundColor: '#090d16', color: '#fff', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontFamily: 'sans-serif' }}>
-        <div className="spinner"></div>
-        <h3 style={{ marginTop: '20px', letterSpacing: '0.5px', fontWeight: '400', color: '#94a3b8' }}>Bypassing cloud layers...</h3>
-        <p style={{ fontSize: '12px', color: '#64748b', marginTop: '5px' }}>Please wait, forwarding safely</p>
+      <div style={{ backgroundColor: '#090d16', color: '#fff', minHeight: '100vh', padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontFamily: 'sans-serif', textAlign: 'center' }}>
+        
+        {/* TOP AD BANNER PLACEHOLDER */}
+        <div style={{ width: '100%', maxWidth: '350px', height: '90px', background: '#111827', border: '1px dashed #374151', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b', fontSize: '12px', marginBottom: '30px' }}>
+          ✨ [Place Adsterra Banner Script/Link here] ✨
+        </div>
+
+        <div style={{ background: '#111827', border: '1px solid #1f2937', padding: '30px 24px', borderRadius: '16px', width: '100%', maxWidth: '350px', boxShadow: '0 10px 25px rgba(0,0,0,0.4)' }}>
+          <h2 style={{ fontSize: '22px', fontWeight: '600', marginBottom: '8px' }}>Your Link is Safe!</h2>
+          <p style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '24px' }}>Clicking verification protocols generated by network server.</p>
+
+          {countdown > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+              <div style={{ width: '60px', height: '60px', borderRadius: '50%', border: '3px solid #38bdf8', borderTopColor: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: '700', color: '#38bdf8', animation: 'spin 1s linear infinite' }}>
+                {countdown}
+              </div>
+              <span style={{ fontSize: '13px', color: '#64748b' }}>Waiting for secure landing nodes...</span>
+            </div>
+          ) : (
+            <button 
+              onClick={() => window.location.replace(targetDestination)}
+              style={{ width: '100%', padding: '16px', background: '#22c55e', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '15px', fontWeight: '600', cursor: 'pointer', boxShadow: '0 4px 15px rgba(34, 197, 94, 0.3)' }}
+            >
+              🚀 Get Original Link
+            </button>
+          )}
+        </div>
+
+        {/* BOTTOM AD BANNER PLACEHOLDER */}
+        <div style={{ width: '100%', maxWidth: '350px', height: '250px', background: '#111827', border: '1px dashed #374151', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b', fontSize: '12px', marginTop: '30px' }}>
+          ✨ [Place Adsterra Native/Square Banner here] ✨
+        </div>
+
         <style dangerouslySetInnerHTML={{__html: `
-          .spinner { width: 40px; height: 40px; border: 3px solid rgba(56, 189, 248, 0.1); border-radius: 50%; border-top-color: #38bdf8; animation: spin 0.8s linear infinite; }
-          @keyframes spin { to { transform: rotate(360deg); } }
+          @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         `}} />
       </div>
     );
@@ -181,13 +226,12 @@ export default function App() {
         .tab-active { color: #38bdf8 !important; font-weight: 600; }
       `}} />
 
-      {/* Top Navigation Bar Bar */}
       <div style={{ background: '#111827', padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #1f2937' }}>
         <span style={{ fontSize: '18px', fontWeight: '700', color: '#38bdf8', letterSpacing: '-0.5px' }}>LG SHORTENER PRO</span>
         <span style={{ background: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8', padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: '600' }}>Cloud Node Active</span>
       </div>
 
-      {/* ================= VIEW 1: PREMIUM HOME ================= */}
+      {/* ================= VIEW 1: HOME VIEW ================= */}
       {activeTab === 'home' && (
         <div style={{ padding: '24px 16px' }}>
           <div style={{ textAlign: 'center', margin: '30px 0 25px 0' }}>
@@ -205,16 +249,24 @@ export default function App() {
               onChange={(e) => setLongUrl(e.target.value)}
             />
             <button className="saas-btn" onClick={() => handleShorten('home')}>Shorten URL</button>
-
-            {generatedLink && (
-              <div style={{ marginTop: '16px', background: '#030712', padding: '12px', borderRadius: '8px', border: '1px solid #1f2937', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ color: '#38bdf8', fontSize: '13px', wordBreak: 'break-all', fontWeight: '500' }}>{generatedLink}</span>
-                <button onClick={() => { navigator.clipboard.writeText(generatedLink); alert("Copied!"); }} style={{ background: '#38bdf8', border: 'none', color: '#000', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>Copy</button>
-              </div>
-            )}
           </div>
 
-          {/* DYNAMIC VIEW CONDITION: Hides auth box completely if login state is true */}
+          {/* 📁 HOME GENERATED LINKS STORAGE LOOP */}
+          {homeLinks.length > 0 && (
+            <div className="saas-card">
+              <h4 style={{ margin: '0 0 14px 0', fontSize: '14px', fontWeight: '600' }}>📋 Shortened Links History</h4>
+              {homeLinks.map((l, index) => (
+                <div key={index} style={{ background: '#030712', padding: '12px', borderRadius: '8px', border: '1px solid #1f2937', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ width: '75%', overflow: 'hidden' }}>
+                    <div style={{ color: '#38bdf8', fontWeight: '600', fontSize: '13px' }}>{l.shortUrl}</div>
+                    <div style={{ color: '#64748b', fontSize: '11px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', marginTop: '2px' }}>{l.originalUrl}</div>
+                  </div>
+                  <button onClick={() => { navigator.clipboard.writeText(l.shortUrl); alert("Copied!"); }} style={{ background: '#38bdf8', border: 'none', color: '#000', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>Copy</button>
+                </div>
+              ))}
+            </div>
+          )}
+
           {!user ? (
             <div className="saas-card" style={{ textAlign: 'center', marginTop: '12px' }}>
               <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: '600' }}>Maximize Your Traffic Payouts</h4>
@@ -263,13 +315,16 @@ export default function App() {
               <p style={{ color: '#64748b', fontSize: '12px', textAlign: 'center', padding: '10px 0' }}>No mapped arrays tracked in database ecosystem.</p>
             ) : (
               userLinks.map((l, index) => (
-                <div key={index} style={{ background: '#030712', padding: '12px', borderRadius: '8px', border: '1px solid #1f2937', marginBottom: '10px' }}>
-                  <div style={{ color: '#38bdf8', fontWeight: '600', fontSize: '13px' }}>?go={l.alias}</div>
-                  <div style={{ color: '#64748b', fontSize: '11px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '2px' }}>{l.originalUrl}</div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginTop: '8px', paddingTop: '6px', borderTop: '1px solid #1f2937' }}>
-                    <span style={{ color: '#94a3b8' }}>Clicks: <strong style={{ color: '#38bdf8' }}>{l.clicks || 0}</strong></span>
-                    <span style={{ color: '#10b981', fontWeight: '600' }}>Live</span>
+                <div key={index} style={{ background: '#030712', padding: '12px', borderRadius: '8px', border: '1px solid #1f2937', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ width: '70%', overflow: 'hidden' }}>
+                    <div style={{ color: '#38bdf8', fontWeight: '600', fontSize: '13px' }}>{l.shortUrl}</div>
+                    <div style={{ color: '#64748b', fontSize: '11px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '2px' }}>{l.originalUrl}</div>
+                    <div style={{ display: 'flex', gap: '10px', fontSize: '11px', marginTop: '4px' }}>
+                      <span style={{ color: '#94a3b8' }}>Clicks: <strong style={{ color: '#38bdf8' }}>{l.clicks || 0}</strong></span>
+                      <span style={{ color: '#10b981', fontWeight: '600' }}>Live</span>
+                    </div>
                   </div>
+                  <button onClick={() => { navigator.clipboard.writeText(l.shortUrl); alert("Copied!"); }} style={{ background: '#38bdf8', border: 'none', color: '#000', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>Copy</button>
                 </div>
               ))
             )}
@@ -277,7 +332,7 @@ export default function App() {
         </div>
       )}
 
-      {/* ================= VIEW 3: USER PROFILE AUTH ================= */}
+      {/* ================= VIEW 3: USER ENTRY SIGN-IN ================= */}
       {activeTab === 'profile' && (
         <div style={{ padding: '24px 16px' }}>
           {!user ? (
@@ -288,7 +343,7 @@ export default function App() {
               {isSignUp && (
                 <input type="text" placeholder="Your Name" className="saas-input" value={name} onChange={(e) => setName(e.target.value)} />
               )}
-              <input type="email" placeholder="Email Address" className="saas-input" value={email} onChange={{(e) => setEmail(e.target.value)}} />
+              <input type="email" placeholder="Email Address" className="saas-input" value={email} onChange={(e) => setEmail(e.target.value)} />
               <input type="password" placeholder="Account Access Token" className="saas-input" value={password} onChange={(e) => setPassword(e.target.value)} />
               
               <button className="saas-btn" style={{ marginTop: '6px' }} onClick={handleAuth}>{isSignUp ? "Confirm Dynamic Registration" : "Authenticate Session Gateway"}</button>
@@ -311,45 +366,9 @@ export default function App() {
         </div>
       )}
 
-      {/* ================= VIEW 4: MASTER CENTRAL ADMIN CORE ================= */}
+      {/* ================= VIEW 4: SYSTEM MASTER ADMIN CORE ================= */}
       {activeTab === 'admin' && (
         <div style={{ padding: '20px 16px' }}>
           <h3 style={{ color: '#ef4444', margin: '0 0 16px 0', fontSize: '20px', fontWeight: '700' }}>🛡️ Central Core System Admin</h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
-            <div className="saas-card" style={{ padding: '16px' }}>
-              <span style={{ fontSize: '11px', color: '#94a3b8' }}>Network Accounts</span>
-              <p style={{ fontSize: '24px', fontWeight: '700', margin: '4px 0 0 0' }}>{adminStats.totalUsers}</p>
-            </div>
-            <div className="saas-card" style={{ padding: '16px' }}>
-              <span style={{ fontSize: '11px', color: '#94a3b8' }}>Cumulative Traffic</span>
-              <p style={{ fontSize: '24px', fontWeight: '700', margin: '4px 0 0 0', color: '#38bdf8' }}>{adminStats.totalClicks}</p>
-            </div>
-          </div>
-          <div className="saas-card">
-            <h4 style={{ margin: '0 0 12px 0' }}>⚙️ Global Runtime Configurations</h4>
-            <label style={{ fontSize: '12px', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>Fixed Baseline CPM Rate ($)</label>
-            <input type="number" className="saas-input" defaultValue="6.00" />
-            <button className="saas-btn" style={{ background: '#ef4444', color: '#fff' }} onClick={() => alert("Global structural baseline constraints synchronized.")}>Sync Parameter Rules</button>
-          </div>
-        </div>
-      )}
-
-      {/* Flat Executive Sticky Bottom Navigation */}
-      <div style={{ background: '#111827', position: 'fixed', bottom: 0, left: 0, right: 0, height: '65px', display: 'flex', borderTop: '1px solid #1f2937', zIndex: 99999 }}>
-        <button className={`tab-bar-item ${activeTab === 'home' ? 'tab-active' : ''}`} onClick={() => setActiveTab('home')}>
-          <span style={{ fontSize: '16px', marginBottom: '2px' }}>🏠</span>
-          <span>Home</span>
-        </button>
-        <button className={`tab-bar-item ${activeTab === 'dash' ? 'tab-active' : ''}`} onClick={() => setActiveTab('dash')}>
-          <span style={{ fontSize: '16px', marginBottom: '2px' }}>📊</span>
-          <span>Console</span>
-        </button>
-        <button className={`tab-bar-item ${activeTab === 'profile' ? 'tab-active' : ''}`} onClick={() => setActiveTab('profile')}>
-          <span style={{ fontSize: '16px', marginBottom: '2px' }}>👤</span>
-          <span>Account</span>
-        </button>
-      </div>
-
-    </div>
-  );
-        }
+            <div 
