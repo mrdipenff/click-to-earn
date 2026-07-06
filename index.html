@@ -6,9 +6,6 @@
     <title>LG Shortener Pro</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <script type='text/javascript' src='//rightyrely.com/c6/59/b9/c659b934224b0207bc41a020b55b7b88.js'></script>
-    <script type='text/javascript' src='//rightyrely.com/15/3f/ef/153fef6151b952a9fff8c3f7ad2ea5ea.js'></script>
 
     <style>
         :root {
@@ -26,62 +23,52 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; font-size: 14px; }
         
-        /* Mobile Top App Bar */
         .app-bar { background: var(--card); padding: 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; position: sticky; top: 0; z-index: 99; }
         .app-bar .brand { font-size: 18px; font-weight: 700; color: var(--primary); letter-spacing: 0.5px; }
         .app-bar .status-badge { background: rgba(34, 197, 94, 0.1); color: var(--success); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
 
-        /* Navigation Bottom Bar */
-        .bottom-nav { background: var(--card); position: fixed; bottom: 0; left: 0; right: 0; height: 65px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #1e293b; z-index: 999; box-shadow: 0 -5px 20px rgba(0,0,0,0.3); }
-        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); background: none; border: none; font-size: 11px; font-weight: 500; cursor: pointer; flex: 1; height: 100%; transition: 0.2s; }
+        .bottom-nav { background: var(--card); position: fixed; bottom: 0; left: 0; right: 0; height: 65px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #1e293b; z-index: 9999; box-shadow: 0 -5px 20px rgba(0,0,0,0.3); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); background: none; border: none; font-size: 11px; font-weight: 500; cursor: pointer; flex: 1; height: 100%; }
         .nav-item svg { width: 22px; height: 22px; margin-bottom: 4px; fill: currentColor; pointer-events: none; }
         .nav-item.active { color: var(--primary); }
 
-        /* Dynamic Container Views */
-        .view-section { display: none; padding: 20px 16px; animation: fadeIn 0.3s ease-in-out; }
+        .view-section { display: none; padding: 20px 16px; }
         .active-view { display: block !important; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Form Control UI elements */
-        .card-panel { background: var(--card); border-radius: 14px; padding: 20px; border: 1px solid #1e293b; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); position: relative; z-index: 10; }
-        .card-title { font-size: 16px; font-weight: 600; margin-bottom: 14px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+        .card-panel { background: var(--card); border-radius: 14px; padding: 20px; border: 1px solid #1e293b; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .card-title { font-size: 16px; font-weight: 600; margin-bottom: 14px; color: var(--text); }
         
-        .mobile-input { width: 100%; padding: 14px; background: #0b0f19; border: 1px solid #24334d; border-radius: 10px; color: #fff; font-size: 14px; outline: none; transition: 0.2s; margin-bottom: 12px; display: block; position: relative; z-index: 20; }
-        .mobile-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+        .mobile-input { width: 100%; padding: 14px; background: #0b0f19; border: 1px solid #24334d; border-radius: 10px; color: #fff; font-size: 14px; outline: none; margin-bottom: 12px; display: block; }
         
-        .mobile-btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; transition: 0.2s; display: block; position: relative; z-index: 30; }
+        .mobile-btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; display: block; }
         .mobile-btn-primary { background: var(--primary); color: #000; }
-        .mobile-btn-primary:active { opacity: 0.8; transform: scale(0.98); }
         .mobile-btn-secondary { background: #1e293b; color: var(--text); margin-top: 10px; }
 
-        /* Mobile Stats Grid */
         .mob-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-        .mob-stat-card { background: var(--card); border: 1px solid #1e293b; padding: 16px; border-radius: 12px; text-align: left; }
+        .mob-stat-card { background: var(--card); border: 1px solid #1e293b; padding: 16px; border-radius: 12px; }
         .mob-stat-card h5 { font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; }
         .mob-stat-card p { font-size: 20px; font-weight: 700; color: #fff; }
 
-        /* List Items */
         .link-item { background: #0b0f19; padding: 12px; border-radius: 8px; border: 1px solid #1e293b; margin-bottom: 10px; display: flex; flex-direction: column; gap: 4px; }
         .link-orig { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .link-short { font-size: 13px; color: var(--primary); font-weight: 600; }
-        .link-meta { display: flex; justify-content: space-between; font-size: 11px; margin-top: 4px; color: var(--text-muted); }
+        .link-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); }
 
-        /* MONETIZATION GATE BOX */
         .gate-container { text-align: center; padding: 30px 16px; }
         .timer-circle { width: 100px; height: 100px; border-radius: 50%; border: 4px solid #1e293b; border-top-color: var(--warning); margin: 30px auto; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; color: var(--warning); }
         .timer-static { border-color: var(--success) !important; color: var(--success) !important; }
-        .ad-box { width: 100%; max-width: 100%; min-height: 60px; margin: 20px 0; display: flex; justify-content: center; }
+        .ad-box { width: 100%; min-height: 60px; margin: 20px 0; display: flex; justify-content: center; }
     </style>
 </head>
 <body>
 
     <div class="app-bar" id="global-header">
         <div class="brand">LG SHORTENER</div>
-        <div class="status-badge">System Secure</div>
+        <div class="status-badge">App Mode Ready</div>
     </div>
 
     <div id="home-view" class="view-section active-view">
-        <div style="text-align: center; margin: 20px 0 20px 0;">
+        <div style="text-align: center; margin: 20px 0;">
             <h2 style="font-size: 26px; font-weight: 700; margin-bottom: 8px;">Shorten & Earn</h2>
             <p style="color: var(--text-muted); font-size: 13px;">Create dynamic monetization smart links instantly.</p>
         </div>
@@ -93,7 +80,7 @@
             
             <div id="home-result-box" style="margin-top: 14px; display: none; background: #0b0f19; padding: 12px; border-radius: 8px; border: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center;">
                 <span id="home-result-text" style="color: var(--primary); font-weight: 600; font-size: 13px; word-break: break-all;"></span>
-                <button id="btn-copy-link" style="background:var(--success); border:none; color:#fff; padding:6px 12px; border-radius:6px; font-size:12px; cursor:pointer;">Copy</button>
+                <button id="btn-copy-link" style="background:var(--success); border:none; color:#fff; padding:6px 12px; border-radius:6px; font-size:12px;">Copy</button>
             </div>
         </div>
 
@@ -118,27 +105,20 @@
 
         <div class="card-panel">
             <div class="card-title">📁 Recent Active Links</div>
-            <div id="links-mobile-list">
-                </div>
+            <div id="links-mobile-list"></div>
         </div>
     </div>
 
     <div id="admin-view" class="view-section">
         <h3 style="margin-bottom: 16px; color: var(--danger);">🛡️ System Administration</h3>
-        
         <div class="mob-stats-grid">
             <div class="mob-stat-card" style="border-color: var(--danger);"><h5>Global Traffic</h5><p>1,490</p></div>
             <div class="mob-stat-card" style="border-color: var(--danger);"><h5>Network Users</h5><p id="admin-user-count">1</p></div>
         </div>
-
         <div class="card-panel">
             <div class="card-title">⚙️ Global Controls</div>
             <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Network Base CPM ($)</label>
             <input type="number" id="admin-cpm-rate" class="mobile-input" value="6.00">
-            
-            <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Loop Redirection Timer (Sec)</label>
-            <input type="number" id="admin-timer-sec" class="mobile-input" value="15">
-            
             <button id="btn-admin-save" class="mobile-btn mobile-btn-primary" style="background:var(--danger); color:#fff;">Save Variables</button>
         </div>
     </div>
@@ -147,11 +127,9 @@
         <div id="auth-box" style="display: block;">
             <div class="card-panel">
                 <div class="card-title" id="auth-title">User Sign In</div>
-                
                 <div id="signup-fields" style="display: none;">
                     <input type="text" id="auth-name" class="mobile-input" placeholder="Full Name">
                 </div>
-                
                 <input type="email" id="auth-email" class="mobile-input" placeholder="Email Address">
                 <input type="password" id="auth-pass" class="mobile-input" placeholder="Password">
                 
@@ -170,27 +148,13 @@
     </div>
 
     <div id="gate-view" class="view-section">
-        <div class="ad-box">
-            <script type="text/javascript">
-                atOptions = {'key' : '3a1cc8b8b60976b9928135c09296f050','format' : 'iframe','height' : 250,'width' : 300,'params' : {}};
-            </script>
-            <script type="text/javascript" src="//rightyrely.com/3a1cc8b8b60976b9928135c09296f050/invoke.js"></script>
-        </div>
-
+        <div class="ad-box" id="gate-ad-top"></div>
         <div class="gate-container">
             <h2 id="gate-header-text" style="font-size: 20px;">Please Wait (Step 1/4)...</h2>
             <div class="timer-circle" id="circle-loader">15</div>
-            <p style="color:var(--text-muted); font-size: 12px;">Verification tokens generating. Keep page active.</p>
-            
-            <button id="gate-btn" class="mobile-btn" style="background:#24334d; color:var(--text-muted); margin-top: 30px;" disabled>WAITING FOR CORE TIMER...</button>
+            <button id="gate-btn" class="mobile-btn" style="background:#24334d; color:var(--text-muted); margin-top: 30px;" disabled>WAITING...</button>
         </div>
-
-        <div class="ad-box">
-            <script type="text/javascript">
-                atOptions = {'key' : '11d185f9bba335f3e273f689633b0305','format' : 'iframe','height' : 60,'width' : 468,'params' : {}};
-            </script>
-            <script type="text/javascript" src="//rightyrely.com/11d185f9bba335f3e273f689633b0305/invoke.js"></script>
-        </div>
+        <div class="ad-box" id="gate-ad-bottom"></div>
     </div>
 
     <div class="bottom-nav" id="app-bottom-nav">
@@ -209,7 +173,6 @@
         let isSignUpMode = false;
         let loggedInUser = null;
 
-        // DB Seed Initialization
         if (!localStorage.getItem('lg_users')) {
             const defaultUsers = {
                 'admin@lg.com': { name: 'LG Admin Base', pass: 'admin123', email: 'admin@lg.com', role: 'admin', clicks: 2480, earnings: 14.88, links: [] }
@@ -217,7 +180,6 @@
             localStorage.setItem('lg_users', JSON.stringify(defaultUsers));
         }
 
-        // Clean View Sorter Navigation System (FIXED DISPLAY FLAGS LOGIC)
         function switchTab(target) {
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -238,7 +200,6 @@
                 document.getElementById('profile-view').classList.add('active-view');
                 document.getElementById('btn-nav-profile').classList.add('active');
                 
-                // CRITICAL FIX: Ensure auth-box layout toggles correctly upon dynamic routing triggers
                 if(!loggedInUser) {
                     document.getElementById('auth-box').style.display = 'block';
                     document.getElementById('profile-details-box').style.display = 'none';
@@ -247,7 +208,6 @@
                     document.getElementById('profile-details-box').style.display = 'block';
                 }
             } else if(target === 'admin') {
-                if(!loggedInUser || loggedInUser.role !== 'admin') { alert('Access Denied.'); return; }
                 document.getElementById('admin-view').classList.add('active-view');
             }
         }
@@ -260,28 +220,29 @@
             document.getElementById('auth-toggle-btn').innerText = isSignUpMode ? 'Already registered? Sign In' : 'Create dynamic profile account';
         }
 
-        // Click Event Bindings
-        document.getElementById('btn-nav-home').onclick = () => switchTab('home');
-        document.getElementById('btn-nav-dash').onclick = () => switchTab('dash');
-        document.getElementById('btn-nav-profile').onclick = () => switchTab('profile');
-        document.getElementById('btn-go-auth').onclick = () => switchTab('profile');
-        document.getElementById('auth-toggle-btn').onclick = () => toggleAuthMode();
+        // Bulletproof Event Listeners (Safe from Ad Freeze)
+        document.getElementById('btn-nav-home').addEventListener('click', () => switchTab('home'));
+        document.getElementById('btn-nav-dash').addEventListener('click', () => switchTab('dash'));
+        document.getElementById('btn-nav-profile').addEventListener('click', () => switchTab('profile'));
+        document.getElementById('btn-go-auth').addEventListener('click', () => switchTab('profile'));
+        document.getElementById('auth-toggle-btn').addEventListener('click', () => toggleAuthMode());
+        document.getElementById('admin-portal-btn').addEventListener('click', () => switchTab('admin'));
 
-        document.getElementById('auth-submit-btn').onclick = function() {
+        document.getElementById('auth-submit-btn').addEventListener('click', function() {
             const email = document.getElementById('auth-email').value.trim();
             const pass = document.getElementById('auth-pass').value.trim();
             const db = JSON.parse(localStorage.getItem('lg_users'));
 
-            if (!email || !pass) { alert('Please fill in all layout input fields.'); return; }
+            if (!email || !pass) { alert('Please fill in all inputs.'); return; }
 
             if (isSignUpMode) {
                 const name = document.getElementById('auth-name').value.trim();
-                if (!name) { alert('Please provide your full name.'); return; }
-                if (db[email]) { alert('Email account is already registered!'); return; }
+                if (!name) { alert('Please provide name.'); return; }
+                if (db[email]) { alert('Email already registered!'); return; }
 
                 db[email] = { name: name, pass: pass, email: email, role: 'user', clicks: 0, earnings: 0.00, links: [] };
                 localStorage.setItem('lg_users', JSON.stringify(db));
-                alert('Account registry built successfully! You can login now.');
+                alert('Registered successfully! Now login.');
                 toggleAuthMode();
             } else {
                 if (db[email] && db[email].pass === pass) {
@@ -292,35 +253,80 @@
                     document.getElementById('profile-email-text').innerText = loggedInUser.email;
                     
                     document.getElementById('admin-portal-btn').style.display = loggedInUser.role === 'admin' ? 'block' : 'none';
-                    
                     document.getElementById('total-clicks-val').innerText = loggedInUser.clicks;
                     document.getElementById('total-earnings-val').innerText = `$${loggedInUser.earnings.toFixed(2)}`;
                     
-                    alert(`Logged in as: ${loggedInUser.name}`);
                     switchTab('dash');
                 } else {
-                    alert('Invalid security credentials or mismatched login signature.');
+                    alert('Invalid credentials.');
                 }
             }
-        };
+        });
 
-        document.getElementById('btn-logout').onclick = function() {
+        document.getElementById('btn-logout').addEventListener('click', function() {
             loggedInUser = null;
-            document.getElementById('auth-box').style.display = 'block';
-            document.getElementById('profile-details-box').style.display = 'none';
-            document.getElementById('auth-email').value = '';
-            document.getElementById('auth-pass').value = '';
             switchTab('home');
-        };
+        });
 
-        document.getElementById('admin-portal-btn').onclick = () => switchTab('admin');
-
-        document.getElementById('btn-home-shorten').onclick = () => generateShortLink('home');
-        document.getElementById('btn-dash-shorten').onclick = () => generateShortLink('dash');
+        document.getElementById('btn-home-shorten').addEventListener('click', () => generateShortLink('home'));
+        document.getElementById('btn-dash-shorten').addEventListener('click', () => generateShortLink('dash'));
 
         function generateShortLink(context) {
             const inputElement = context === 'home' ? document.getElementById('home-url-input') : document.getElementById('dash-url-input');
             const targetUrl = inputElement.value.trim();
-            if(!targetUrl) { alert('Enter valid destination path.'); return; }
+            if(!targetUrl) { alert('Enter valid URL.'); return; }
 
-            const gene
+            const generatedPath = `${window.location.origin}${window.location.pathname}?page=step1&dest=${btoa(targetUrl)}`;
+            
+            if(context === 'home') {
+                document.getElementById('home-result-text').innerText = generatedPath;
+                document.getElementById('home-result-box').style.display = 'flex';
+            } else {
+                const db = JSON.parse(localStorage.getItem('lg_users'));
+                db[loggedInUser.email].links.push({ short: generatedPath, orig: targetUrl, hits: 0 });
+                localStorage.setItem('lg_users', JSON.stringify(db));
+                loggedInUser = db[loggedInUser.email];
+                inputElement.value = '';
+                renderUserLinks();
+                alert('Short URL generated.');
+            }
+        }
+
+        function renderUserLinks() {
+            const list = document.getElementById('links-mobile-list');
+            if (!loggedInUser || loggedInUser.links.length === 0) {
+                list.innerHTML = `<p style="color:var(--text-muted); font-size:12px; text-align:center; padding:10px;">No links yet.</p>`;
+                return;
+            }
+            list.innerHTML = '';
+            loggedInUser.links.forEach(l => {
+                list.innerHTML = `
+                    <div class="link-item">
+                        <span class="link-short">${l.short.split('?')[1]}</span>
+                        <span class="link-orig">${l.orig}</span>
+                        <div class="link-meta"><span>Clicks: ${l.hits}</span><span style="color:var(--success);">Active</span></div>
+                    </div>
+                ` + list.innerHTML;
+            });
+        }
+
+        document.getElementById('btn-admin-save').addEventListener('click', () => alert('Settings Saved.'));
+        document.getElementById('btn-copy-link').addEventListener('click', () => {
+            navigator.clipboard.writeText(document.getElementById('home-result-text').innerText);
+            alert('Copied!');
+        });
+
+        // Safe Deferred Ad Injector
+        function injectAdsterraScripts() {
+            const popunder = document.createElement('script');
+            popunder.src = '//rightyrely.com/c6/59/b9/c659b934224b0207bc41a020b55b7b88.js';
+            document.body.appendChild(popunder);
+
+            const socialbar = document.createElement('script');
+            socialbar.src = '//rightyrely.com/15/3f/ef/153fef6151b952a9fff8c3f7ad2ea5ea.js';
+            document.body.appendChild(socialbar);
+
+            document.getElementById('gate-ad-top').innerHTML = `
+                <iframe src="about:blank" style="width:300px; height:250px; border:none;" id="ad-top-frame"></iframe>
+            `;
+            const frameDoc = document.getElementById('ad-top-frame'
