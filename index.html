@@ -36,7 +36,7 @@
         /* Navigation Bottom Bar */
         .bottom-nav { background: var(--card); position: fixed; bottom: 0; left: 0; right: 0; height: 65px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #1e293b; z-index: 999; box-shadow: 0 -5px 20px rgba(0,0,0,0.3); }
         .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); background: none; border: none; font-size: 11px; font-weight: 500; cursor: pointer; flex: 1; height: 100%; transition: 0.2s; }
-        .nav-item svg { width: 22px; height: 22px; margin-bottom: 4px; fill: currentColor; }
+        .nav-item svg { width: 22px; height: 22px; margin-bottom: 4px; fill: currentColor; pointer-events: none; }
         .nav-item.active { color: var(--primary); }
 
         /* Dynamic Container Views */
@@ -45,15 +45,15 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* Form Control UI elements */
-        .card-panel { background: var(--card); border-radius: 14px; padding: 20px; border: 1px solid #1e293b; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .card-panel { background: var(--card); border-radius: 14px; padding: 20px; border: 1px solid #1e293b; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); position: relative; z-index: 10; }
         .card-title { font-size: 16px; font-weight: 600; margin-bottom: 14px; color: var(--text); display: flex; align-items: center; gap: 8px; }
         
-        .mobile-input { width: 100%; padding: 14px; background: #0b0f19; border: 1px solid #24334d; border-radius: 10px; color: #fff; font-size: 14px; outline: none; transition: 0.2s; margin-bottom: 12px; }
+        .mobile-input { width: 100%; padding: 14px; background: #0b0f19; border: 1px solid #24334d; border-radius: 10px; color: #fff; font-size: 14px; outline: none; transition: 0.2s; margin-bottom: 12px; display: block; position: relative; z-index: 20; }
         .mobile-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
         
-        .mobile-btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; transition: 0.2s; display: block; }
+        .mobile-btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; transition: 0.2s; display: block; position: relative; z-index: 30; }
         .mobile-btn-primary { background: var(--primary); color: #000; }
-        .mobile-btn-primary:hover { opacity: 0.9; }
+        .mobile-btn-primary:active { opacity: 0.8; transform: scale(0.98); }
         .mobile-btn-secondary { background: #1e293b; color: var(--text); margin-top: 10px; }
 
         /* Mobile Stats Grid */
@@ -80,31 +80,31 @@
     <!-- Mobile Header -->
     <div class="app-bar" id="global-header">
         <div class="brand">LG SHORTENER</div>
-        <div class="status-badge" id="live-status">Secure Connection</div>
+        <div class="status-badge">System Secure</div>
     </div>
 
     <!-- ================= VIEW 1: LANDING HOME ================= -->
     <div id="home-view" class="view-section active-view">
-        <div style="text-align: center; margin: 30px 0 20px 0;">
+        <div style="text-align: center; margin: 20px 0 20px 0;">
             <h2 style="font-size: 26px; font-weight: 700; margin-bottom: 8px;">Shorten & Earn</h2>
             <p style="color: var(--text-muted); font-size: 13px;">Create dynamic monetization smart links instantly.</p>
         </div>
 
         <div class="card-panel">
             <div class="card-title">🔗 Create Short Link</div>
-            <input type="url" id="home-url-input" class="mobile-input" placeholder="Paste your long destination web URL here...">
-            <button class="mobile-btn mobile-btn-primary" onclick="generateShortLink('home')">Shorten URL</button>
+            <input type="url" id="home-url-input" class="mobile-input" placeholder="Paste your long URL address here...">
+            <button id="btn-home-shorten" class="mobile-btn mobile-btn-primary">Shorten URL</button>
             
             <div id="home-result-box" style="margin-top: 14px; display: none; background: #0b0f19; padding: 12px; border-radius: 8px; border: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center;">
                 <span id="home-result-text" style="color: var(--primary); font-weight: 600; font-size: 13px; word-break: break-all;"></span>
-                <button onclick="navigator.clipboard.writeText(document.getElementById('home-result-text').innerText); alert('Copied!')" style="background:var(--success); border:none; color:#fff; padding:6px 12px; border-radius:6px; font-size:12px; cursor:pointer;">Copy</button>
+                <button id="btn-copy-link" style="background:var(--success); border:none; color:#fff; padding:6px 12px; border-radius:6px; font-size:12px; cursor:pointer;">Copy</button>
             </div>
         </div>
 
-        <div class="card-panel" style="text-align: center; padding: 30px 15px;">
+        <div class="card-panel" style="text-align: center; padding: 25px 15px;">
             <h4 style="margin-bottom: 8px;">Join Our Payout Network</h4>
             <p style="color:var(--text-muted); font-size:12px; margin-bottom: 16px;">Create an account to track clicks and withdraw analytics dashboard tokens.</p>
-            <button class="mobile-btn mobile-btn-secondary" onclick="switchTab('profile')">Login / Sign Up Now</button>
+            <button id="btn-go-auth" class="mobile-btn mobile-btn-secondary">Login / Sign Up Now</button>
         </div>
     </div>
 
@@ -118,7 +118,7 @@
         <div class="card-panel">
             <div class="card-title">⚡ Quick Console Shortener</div>
             <input type="url" id="dash-url-input" class="mobile-input" placeholder="Monetize fresh source URL...">
-            <button class="mobile-btn mobile-btn-primary" onclick="generateShortLink('dash')">Generate Link</button>
+            <button id="btn-dash-shorten" class="mobile-btn mobile-btn-primary">Generate Link</button>
         </div>
 
         <div class="card-panel">
@@ -146,7 +146,7 @@
             <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Loop Redirection Timer (Sec)</label>
             <input type="number" id="admin-timer-sec" class="mobile-input" value="15">
             
-            <button class="mobile-btn mobile-btn-primary" style="background:var(--danger); color:#fff;" onclick="saveAdminSettings()">Save Variables</button>
+            <button id="btn-admin-save" class="mobile-btn mobile-btn-primary" style="background:var(--danger); color:#fff;">Save Variables</button>
         </div>
     </div>
 
@@ -155,14 +155,16 @@
         <div id="auth-box">
             <div class="card-panel">
                 <div class="card-title" id="auth-title">User Sign In</div>
+                
                 <div id="signup-fields" style="display: none;">
                     <input type="text" id="auth-name" class="mobile-input" placeholder="Full Name">
                 </div>
+                
                 <input type="email" id="auth-email" class="mobile-input" placeholder="Email Address">
                 <input type="password" id="auth-pass" class="mobile-input" placeholder="Password">
                 
-                <button class="mobile-btn mobile-btn-primary" id="auth-submit-btn" onclick="processAuthEngine()">Sign In</button>
-                <button class="mobile-btn mobile-btn-secondary" id="auth-toggle" onclick="toggleAuthMode()">Create dynamic profile account</button>
+                <button id="auth-submit-btn" class="mobile-btn mobile-btn-primary">Sign In</button>
+                <button id="auth-toggle-btn" class="mobile-btn mobile-btn-secondary">Create dynamic profile account</button>
             </div>
         </div>
 
@@ -170,8 +172,8 @@
             <div style="width: 70px; height: 70px; background: var(--primary-glow); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px auto; color: var(--primary); font-size: 24px; font-weight: bold;">LG</div>
             <h3 id="profile-name-text">LG Member</h3>
             <p id="profile-email-text" style="color: var(--text-muted); margin-bottom: 20px;"></p>
-            <button class="mobile-btn mobile-btn-primary" id="admin-portal-btn" style="display:none;" onclick="switchTab('admin')">Go To Admin View</button>
-            <button class="mobile-btn mobile-btn-secondary" style="background:rgba(239, 68, 68, 0.1); color:var(--danger);" onclick="processLogout()">Sign Out Session</button>
+            <button id="admin-portal-btn" class="mobile-btn mobile-btn-primary" style="display:none; margin-bottom: 10px;">Go To Admin View</button>
+            <button id="btn-logout" class="mobile-btn mobile-btn-secondary" style="background:rgba(239, 68, 68, 0.1); color:var(--danger);">Sign Out Session</button>
         </div>
     </div>
 
@@ -202,31 +204,31 @@
 
     <!-- Mobile Navigation Bar -->
     <div class="bottom-nav" id="app-bottom-nav">
-        <button class="nav-item active" id="btn-nav-home" onclick="switchTab('home')">
+        <button class="nav-item active" id="btn-nav-home">
             <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Home
         </button>
-        <button class="nav-item" id="btn-nav-dash" onclick="switchTab('dash')">
+        <button class="nav-item" id="btn-nav-dash">
             <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>Console
         </button>
-        <button class="nav-item" id="btn-nav-profile" onclick="switchTab('profile')">
+        <button class="nav-item" id="btn-nav-profile">
             <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"/></svg>Account
         </button>
     </div>
 
-    <!-- Client-Side Storage Database Script Engine -->
+    <!-- Safe Click Event Bindings Script Engine -->
     <script>
         let isSignUpMode = false;
         let loggedInUser = null;
 
-        // Initialize Virtual User Database in LocalStorage
+        // DB Seed Initialization
         if (!localStorage.getItem('lg_users')) {
-            // Default Admin Account Setup
             const defaultUsers = {
                 'admin@lg.com': { name: 'LG Admin Base', pass: 'admin123', email: 'admin@lg.com', role: 'admin', clicks: 2480, earnings: 14.88, links: [] }
             };
             localStorage.setItem('lg_users', JSON.stringify(defaultUsers));
         }
 
+        // Clean View Sorter Navigation System
         function switchTab(target) {
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -243,7 +245,7 @@
                 document.getElementById('profile-view').classList.add('active-view');
                 document.getElementById('btn-nav-profile').classList.add('active');
             } else if(target === 'admin') {
-                if(!loggedInUser || loggedInUser.role !== 'admin') { alert('Access Denied. Admin privilege required.'); return; }
+                if(!loggedInUser || loggedInUser.role !== 'admin') { alert('Access Denied.'); return; }
                 document.getElementById('admin-view').classList.add('active-view');
             }
         }
@@ -253,29 +255,33 @@
             document.getElementById('signup-fields').style.display = isSignUpMode ? 'block' : 'none';
             document.getElementById('auth-title').innerText = isSignUpMode ? 'Create Account' : 'User Sign In';
             document.getElementById('auth-submit-btn').innerText = isSignUpMode ? 'Register Account' : 'Sign In';
-            document.getElementById('auth-toggle').innerText = isSignUpMode ? 'Already registered? Sign In' : 'Create dynamic profile account';
+            document.getElementById('auth-toggle-btn').innerText = isSignUpMode ? 'Already registered? Sign In' : 'Create dynamic profile account';
         }
 
-        // 100% Real-Working Authentication Engine (Local Database Storage Loop)
-        function processAuthEngine() {
+        // Absolute Event Handlers Binding Engine (Fixes Mobile Non-Click Issue)
+        document.getElementById('btn-nav-home').onclick = () => switchTab('home');
+        document.getElementById('btn-nav-dash').onclick = () => switchTab('dash');
+        document.getElementById('btn-nav-profile').onclick = () => switchTab('profile');
+        document.getElementById('btn-go-auth').onclick = () => switchTab('profile');
+        document.getElementById('auth-toggle-btn').onclick = () => toggleAuthMode();
+
+        document.getElementById('auth-submit-btn').onclick = function() {
             const email = document.getElementById('auth-email').value.trim();
             const pass = document.getElementById('auth-pass').value.trim();
             const db = JSON.parse(localStorage.getItem('lg_users'));
 
-            if (!email || !pass) { alert('Please fill in all security input fields.'); return; }
+            if (!email || !pass) { alert('Please fill in all layout input fields.'); return; }
 
             if (isSignUpMode) {
                 const name = document.getElementById('auth-name').value.trim();
                 if (!name) { alert('Please provide your full name.'); return; }
                 if (db[email]) { alert('Email account is already registered!'); return; }
 
-                // Save new user profile array to local state database
                 db[email] = { name: name, pass: pass, email: email, role: 'user', clicks: 0, earnings: 0.00, links: [] };
                 localStorage.setItem('lg_users', JSON.stringify(db));
                 alert('Account registry built successfully! You can login now.');
                 toggleAuthMode();
             } else {
-                // Login Verification Check
                 if (db[email] && db[email].pass === pass) {
                     loggedInUser = db[email];
                     document.getElementById('auth-box').style.display = 'none';
@@ -283,39 +289,36 @@
                     document.getElementById('profile-name-text').innerText = loggedInUser.name;
                     document.getElementById('profile-email-text').innerText = loggedInUser.email;
                     
-                    // Show admin configuration trigger if account type is root admin
                     document.getElementById('admin-portal-btn').style.display = loggedInUser.role === 'admin' ? 'block' : 'none';
                     
-                    // Update layout values
                     document.getElementById('total-clicks-val').innerText = loggedInUser.clicks;
                     document.getElementById('total-earnings-val').innerText = `$${loggedInUser.earnings.toFixed(2)}`;
                     
-                    alert(`Welcome session verified: ${loggedInUser.name}`);
+                    alert(`Logged in as: ${loggedInUser.name}`);
                     switchTab('dash');
                 } else {
                     alert('Invalid security credentials or mismatched login signature.');
                 }
             }
-        }
+        };
 
-        function processLogout() {
+        document.getElementById('btn-logout').onclick = function() {
             loggedInUser = null;
             document.getElementById('auth-box').style.display = 'block';
             document.getElementById('profile-details-box').style.display = 'none';
             document.getElementById('auth-email').value = '';
             document.getElementById('auth-pass').value = '';
             switchTab('home');
-        }
+        };
+
+        document.getElementById('admin-portal-btn').onclick = () => switchTab('admin');
+
+        document.getElementById('btn-home-shorten').onclick = () => generateShortLink('home');
+        document.getElementById('btn-dash-shorten').onclick = () => generateShortLink('dash');
 
         function generateShortLink(context) {
             const inputElement = context === 'home' ? document.getElementById('home-url-input') : document.getElementById('dash-url-input');
             const targetUrl = inputElement.value.trim();
             if(!targetUrl) { alert('Enter valid destination path.'); return; }
 
-            const generatedPath = `${window.location.origin}${window.location.pathname}?page=step1&dest=${btoa(targetUrl)}`;
-            
-            if(context === 'home') {
-                document.getElementById('home-result-text').innerText = generatedPath;
-                document.getElementById('home-result-box').style.display = 'flex';
-            } else {
-                // Append gen
+            const generatedPath = `${window.location.origin}$
