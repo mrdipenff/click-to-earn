@@ -34,13 +34,13 @@ export default function App() {
   const [stats, setStats] = useState({ clicks: 0, earnings: 0.00 });
   const [adminStats, setAdminStats] = useState({ totalUsers: 1, totalClicks: 1490 });
   
-  // 💸 4-Stage High-CPM Monetization Script Matrix
+  // 💸 Fixed 4-Stage High-CPM Logic Mapped
   const [adLoopActive, setAdLoopActive] = useState(false);
-  const [currentStage, setCurrentStage] = useState(1); // Stage 1, 2, 3, 4
+  const [currentStage, setCurrentStage] = useState(1); 
   const [stageTimer, setStageTimer] = useState(10);
   const [targetDestination, setTargetDestination] = useState('');
 
-  // 🚀 URL Tracking Handshake
+  // 🚀 URL Check Loop (Stopping Auto-Forward)
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
@@ -51,11 +51,10 @@ export default function App() {
         try {
           const decodedUrl = atob(destParam);
           setTargetDestination(decodedUrl);
-          setAdLoopActive(true);
+          setAdLoopActive(true); // Active ad page interface immediately
           setCurrentStage(1);
           setStageTimer(10);
 
-          // Firestore automatic transaction logs registry
           const logClick = async () => {
             const q = query(collection(db, "links"), where("alias", "==", goParam));
             const querySnapshot = await getDocs(q);
@@ -68,21 +67,21 @@ export default function App() {
           };
           logClick();
         } catch (err) {
-          console.error("Matrix parsing failed:", err);
+          console.error("Matrix decoding error:", err);
         }
       }
     }
   }, []);
 
-  // Universal stage countdown processing engine
+  // Countdown timer processing matrix
   useEffect(() => {
     if (adLoopActive && stageTimer > 0) {
       const timer = setTimeout(() => setStageTimer(stageTimer - 1), 1000);
       return () => clearTimeout(timer);
     }
-  }, [adLoopActive, stageTimer, currentStage]);
+  }, [adLoopActive, stageTimer]);
 
-  // Sync Secure User Auth Token State
+  // Monitor Auth Tokens Session
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
@@ -158,10 +157,11 @@ export default function App() {
           ...newLinkObject
         });
         fetchUserData(user);
+        setGeneratedLink(shortUrl);
         setLongUrl(''); 
-        alert("Monetized link appended to cloud database!");
+        alert("Monetized link appended!");
       } catch (e) {
-        alert("Database cluster mapping error.");
+        alert("Database error.");
       }
     } else {
       setHomeLinks([newLinkObject, ...homeLinks]);
@@ -170,29 +170,28 @@ export default function App() {
     }
   };
 
-  // Move forward through optimization layers
   const advanceStage = (next) => {
     setCurrentStage(next);
-    setStageTimer(next === 4 ? 0 : 7); // Set sequential clocks
+    setStageTimer(next === 4 ? 0 : 8); 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // ================= 💸 VIEW CORE: 4-STAGE AD REVENUE LOOP =================
+  // ================= 💸 VIEW CORE: HARD BOUNDED 4-STAGE REVENUE LOOP =================
   if (adLoopActive) {
     return (
       <div style={{ backgroundColor: '#090d16', color: '#fff', minHeight: '100vh', padding: '20px', fontFamily: '"Inter", sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         
-        {/* TOP MULTI-PLACEMENT AD SLOT */}
+        {/* TOP AD PLACEMENT FRAME */}
         <div style={{ width: '100%', maxWidth: '360px', height: '100px', background: '#111827', border: '1px dashed #4b5563', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6b7280', fontSize: '11px', marginBottom: '20px' }}>
-          🌐 [Adsterra Banner Placement #1 - Top Slot]
+          🌐 [Adsterra Banner Placement #1 - Top Ad Slot]
         </div>
 
-        {/* ================= STAGE 1: LOADING CLOCK PORTAL ================= */}
+        {/* STAGE 1 FRAME */}
         {currentStage === 1 && (
           <div style={{ background: '#111827', border: '1px solid #1f2937', padding: '24px', borderRadius: '16px', width: '100%', maxWidth: '360px', textAlign: 'center' }}>
             <span style={{ color: '#38bdf8', fontSize: '11px', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '1px' }}>Step 1 of 4</span>
             <h3 style={{ fontSize: '20px', margin: '10px 0' }}>Security Checklist...</h3>
-            <p style={{ color: '#94a3b8', fontSize: '13px', marginBottom: '20px' }}>Analyzing system parameters. Please wait for the script handshake.</p>
+            <p style={{ color: '#94a3b8', fontSize: '13px', marginBottom: '20px' }}>Analyzing system parameters. Please wait for handshake token verification.</p>
             
             {stageTimer > 0 ? (
               <div style={{ display: 'inline-block', padding: '12px 24px', background: '#1f2937', borderRadius: '30px', color: '#38bdf8', fontWeight: '700' }}>
@@ -200,77 +199,80 @@ export default function App() {
               </div>
             ) : (
               <div>
-                <p style={{ fontSize: '12px', color: '#10b981', marginBottom: '10px' }}>✓ Checklist Completed! Scroll down to find the action node.</p>
-                <div style={{ height: '350px', background: '#090d16', margin: '15px 0', borderRadius: '8px', border: '1px dashed #374151', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4b5563', fontSize: '12px' }}>
-                  ⚡ [Adsterra High-CPM Rectangular Native Block]
+                <p style={{ fontSize: '12px', color: '#10b981', marginBottom: '10px' }}>✓ Check completed! Scroll down and press the continue gateway node.</p>
+                <div style={{ height: '200px', background: '#090d16', margin: '15px 0', borderRadius: '8px', border: '1px dashed #374151', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4b5563', fontSize: '12px' }}>
+                  ⚡ [Adsterra Native Block Placement]
                 </div>
                 <button onClick={() => advanceStage(2)} style={{ width: '100%', padding: '14px', background: '#38bdf8', color: '#000', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>
-                  Scroll Niche & Click: NEXT PAGE ➡️
+                  NEXT PAGE ➡️
                 </button>
               </div>
             )}
           </div>
         )}
 
-        {/* ================= STAGE 2: CAPTCHA FLOW BYPASS ================= */}
+        {/* STAGE 2 FRAME */}
         {currentStage === 2 && (
           <div style={{ background: '#111827', border: '1px solid #1f2937', padding: '24px', borderRadius: '16px', width: '100%', maxWidth: '360px', textAlign: 'center' }}>
             <span style={{ color: '#a855f7', fontSize: '11px', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '1px' }}>Step 2 of 4</span>
             <h3 style={{ fontSize: '20px', margin: '10px 0' }}>Robot Verification</h3>
             <p style={{ color: '#94a3b8', fontSize: '13px', marginBottom: '20px' }}>Confirm that you are an authorized real client gateway device node.</p>
 
-            <div style={{ background: '#030712', border: '1px solid #1f2937', padding: '16px', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', textAlign: 'left' }}>
+            <div style={{ background: '#030712', border: '1px solid #1f2937', padding: '16px', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
               <input type="checkbox" checked={stageTimer === 0} readOnly style={{ width: '20px', height: '20px', accentColor: '#a855f7' }} />
-              <span style={{ fontSize: '14px' }}>{stageTimer > 0 ? `Verifying device tokens (${stageTimer}s)...` : "I am human client token checked"}</span>
+              <span style={{ fontSize: '14px' }}>{stageTimer > 0 ? `Verifying device configurations (${stageTimer}s)...` : "Human token verification approved."}</span>
             </div>
 
             {stageTimer === 0 && (
               <div>
-                <div style={{ height: '250px', background: '#090d16', margin: '15px 0', borderRadius: '8px', border: '1px dashed #374151', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4b5563', fontSize: '12px' }}>
-                  📺 [Adsterra High-CPM Interstitial Square Frame]
+                <div style={{ height: '200px', background: '#090d16', margin: '15px 0', borderRadius: '8px', border: '1px dashed #374151', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4b5563', fontSize: '12px' }}>
+                  📺 [Adsterra High-CPM Banner Slot]
                 </div>
                 <button onClick={() => advanceStage(3)} style={{ width: '100%', padding: '14px', background: '#a855f7', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>
-                  Scroll Down & Click: CONTINUE 🔓
+                  CONTINUE UNLOCK 🔓
                 </button>
               </div>
             )}
           </div>
         )}
 
-        {/* ================= STAGE 3: CLOUD BUFFER MATRIX ================= */}
+        {/* STAGE 3 FRAME */}
         {currentStage === 3 && (
           <div style={{ background: '#111827', border: '1px solid #1f2937', padding: '24px', borderRadius: '16px', width: '100%', maxWidth: '360px', textAlign: 'center' }}>
             <span style={{ color: '#f59e0b', fontSize: '11px', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '1px' }}>Step 3 of 4</span>
-            <h3 style={{ fontSize: '20px', margin: '10px 0' }}>Bypassing Cloud Layers</h3>
+            <h3 style={{ fontSize: '20px', margin: '10px 0' }}>Cloud Buffer Sync</h3>
             <p style={{ color: '#94a3b8', fontSize: '13px', marginBottom: '20px' }}>Encrypting output variables destination routing tables dynamically.</p>
 
             {stageTimer > 0 ? (
               <div style={{ fontSize: '14px', color: '#f59e0b', padding: '10px', border: '1px solid rgba(245,158,11,0.2)', borderRadius: '8px', background: 'rgba(245,158,11,0.05)' }}>
-                Syncing Cluster Node Parameters: {stageTimer}s
+                Bypassing security scripts: {stageTimer}s
               </div>
             ) : (
               <div>
-                <p style={{ fontSize: '12px', color: '#10b981', marginBottom: '10px' }}>Routing buffers established completely.</p>
-                <div style={{ height: '300px', background: '#090d16', margin: '15px 0', borderRadius: '8px', border: '1px dashed #374151', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4b5563', fontSize: '12px' }}>
-                  💰 [Place Adsterra Popunder Trigger Banner or Social Bar Link]
+                <div style={{ height: '200px', background: '#090d16', margin: '15px 0', borderRadius: '8px', border: '1px dashed #374151', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4b5563', fontSize: '12px' }}>
+                  💰 [Place Adsterra Popunder Trigger Block]
                 </div>
                 <button onClick={() => advanceStage(4)} style={{ width: '100%', padding: '14px', background: '#f59e0b', color: '#000', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>
-                  Scroll Niche & Click: VERIFY CAP 🛡️
+                  VERIFY CAP LINK 🛡️
                 </button>
               </div>
             )}
           </div>
         )}
 
-        {/* ================= STAGE 4: REDIRECTION HANDSHAKE TERMINAL ================= */}
+        {/* STAGE 4 FRAME */}
         {currentStage === 4 && (
           <div style={{ background: '#111827', border: '1px solid #1f2937', padding: '24px', borderRadius: '16px', width: '100%', maxWidth: '360px', textAlign: 'center' }}>
             <span style={{ color: '#10b981', fontSize: '11px', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '1px' }}>Final Destination</span>
-            <h3 style={{ fontSize: '20px', margin: '10px 0' }}>Link Is Ready!</h3>
-            <p style={{ color: '#94a3b8', fontSize: '13px', marginBottom: '24px' }}>Aapka final destination array completely unsealed ho chuka hai.</p>
+            <h3 style={{ fontSize: '20px', margin: '10px 0' }}>Link Is Unlocked!</h3>
+            <p style={{ color: '#94a3b8', fontSize: '13px', marginBottom: '24px' }}>Aapka destination target table fully generate ho chuka hai.</p>
 
             <button 
-              onClick={() => window.location.replace(targetDestination)}
+              onClick={() => {
+                if (targetDestination) {
+                  window.location.href = targetDestination; // Safe redirect anchor trigger
+                }
+              }}
               style={{ width: '100%', padding: '16px', background: '#10b981', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '15px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)' }}
             >
               🚀 GET ORIGINAL LINK
@@ -278,9 +280,9 @@ export default function App() {
           </div>
         )}
 
-        {/* BOTTOM MULTI-PLACEMENT AD SLOT */}
+        {/* BOTTOM AD PLACEMENT FRAME */}
         <div style={{ width: '100%', maxWidth: '360px', height: '250px', background: '#111827', border: '1px dashed #4b5563', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6b7280', fontSize: '11px', marginTop: '20px' }}>
-          🌐 [Adsterra Banner Placement #2 - Large Square Footer Block]
+          🌐 [Adsterra Banner Placement #2 - Footer Slot]
         </div>
 
       </div>
@@ -373,4 +375,13 @@ export default function App() {
             </div>
           </div>
 
-          <d
+          <div className="saas-card">
+            <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600' }}>⚡ Generate Monetized Node</h4>
+            <input 
+              type="url" 
+              className="saas-input"
+              placeholder="Paste long link target path..." 
+              value={longUrl}
+              onChange={(e) => setLongUrl(e.target.value)}
+            />
+            <button className="saas-btn" onClick={() => handleShorten('d
