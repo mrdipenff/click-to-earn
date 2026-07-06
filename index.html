@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LG Shortener Pro</title>
     
-    <!-- Google Inter Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Adsterra Scripts -->
     <script type='text/javascript' src='//rightyrely.com/c6/59/b9/c659b934224b0207bc41a020b55b7b88.js'></script>
     <script type='text/javascript' src='//rightyrely.com/15/3f/ef/153fef6151b952a9fff8c3f7ad2ea5ea.js'></script>
 
@@ -77,13 +75,11 @@
 </head>
 <body>
 
-    <!-- Mobile Header -->
     <div class="app-bar" id="global-header">
         <div class="brand">LG SHORTENER</div>
         <div class="status-badge">System Secure</div>
     </div>
 
-    <!-- ================= VIEW 1: LANDING HOME ================= -->
     <div id="home-view" class="view-section active-view">
         <div style="text-align: center; margin: 20px 0 20px 0;">
             <h2 style="font-size: 26px; font-weight: 700; margin-bottom: 8px;">Shorten & Earn</h2>
@@ -108,7 +104,6 @@
         </div>
     </div>
 
-    <!-- ================= VIEW 2: DASHBOARD ================= -->
     <div id="dashboard-view" class="view-section">
         <div class="mob-stats-grid">
             <div class="mob-stat-card"><h5>Total Hits</h5><p id="total-clicks-val">0</p></div>
@@ -124,12 +119,10 @@
         <div class="card-panel">
             <div class="card-title">📁 Recent Active Links</div>
             <div id="links-mobile-list">
-                <!-- Links will load here in real-time -->
-            </div>
+                </div>
         </div>
     </div>
 
-    <!-- ================= VIEW 3: ADMIN CORE ================= -->
     <div id="admin-view" class="view-section">
         <h3 style="margin-bottom: 16px; color: var(--danger);">🛡️ System Administration</h3>
         
@@ -150,9 +143,8 @@
         </div>
     </div>
 
-    <!-- ================= VIEW 4: PROFILE & AUTH ================= -->
     <div id="profile-view" class="view-section">
-        <div id="auth-box">
+        <div id="auth-box" style="display: block;">
             <div class="card-panel">
                 <div class="card-title" id="auth-title">User Sign In</div>
                 
@@ -177,7 +169,6 @@
         </div>
     </div>
 
-    <!-- ================= VIEW 5: DYNAMIC LOOP GATE VIEW ================= -->
     <div id="gate-view" class="view-section">
         <div class="ad-box">
             <script type="text/javascript">
@@ -202,7 +193,6 @@
         </div>
     </div>
 
-    <!-- Mobile Navigation Bar -->
     <div class="bottom-nav" id="app-bottom-nav">
         <button class="nav-item active" id="btn-nav-home">
             <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Home
@@ -215,7 +205,6 @@
         </button>
     </div>
 
-    <!-- Safe Click Event Bindings Script Engine -->
     <script>
         let isSignUpMode = false;
         let loggedInUser = null;
@@ -228,7 +217,7 @@
             localStorage.setItem('lg_users', JSON.stringify(defaultUsers));
         }
 
-        // Clean View Sorter Navigation System
+        // Clean View Sorter Navigation System (FIXED DISPLAY FLAGS LOGIC)
         function switchTab(target) {
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -237,13 +226,26 @@
                 document.getElementById('home-view').classList.add('active-view');
                 document.getElementById('btn-nav-home').classList.add('active');
             } else if(target === 'dash') {
-                if(!loggedInUser) { alert('Please login to access your console dashboard panel!'); switchTab('profile'); return; }
+                if(!loggedInUser) { 
+                    alert('Please login to access your console dashboard panel!'); 
+                    switchTab('profile'); 
+                    return; 
+                }
                 document.getElementById('dashboard-view').classList.add('active-view');
                 document.getElementById('btn-nav-dash').classList.add('active');
                 renderUserLinks();
             } else if(target === 'profile') {
                 document.getElementById('profile-view').classList.add('active-view');
                 document.getElementById('btn-nav-profile').classList.add('active');
+                
+                // CRITICAL FIX: Ensure auth-box layout toggles correctly upon dynamic routing triggers
+                if(!loggedInUser) {
+                    document.getElementById('auth-box').style.display = 'block';
+                    document.getElementById('profile-details-box').style.display = 'none';
+                } else {
+                    document.getElementById('auth-box').style.display = 'none';
+                    document.getElementById('profile-details-box').style.display = 'block';
+                }
             } else if(target === 'admin') {
                 if(!loggedInUser || loggedInUser.role !== 'admin') { alert('Access Denied.'); return; }
                 document.getElementById('admin-view').classList.add('active-view');
@@ -258,7 +260,7 @@
             document.getElementById('auth-toggle-btn').innerText = isSignUpMode ? 'Already registered? Sign In' : 'Create dynamic profile account';
         }
 
-        // Absolute Event Handlers Binding Engine (Fixes Mobile Non-Click Issue)
+        // Click Event Bindings
         document.getElementById('btn-nav-home').onclick = () => switchTab('home');
         document.getElementById('btn-nav-dash').onclick = () => switchTab('dash');
         document.getElementById('btn-nav-profile').onclick = () => switchTab('profile');
@@ -321,4 +323,4 @@
             const targetUrl = inputElement.value.trim();
             if(!targetUrl) { alert('Enter valid destination path.'); return; }
 
-            const generatedPath = `${window.location.origin}$
+            const gene
