@@ -2,235 +2,199 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LG-Shortener | Professional URL Manager & Monetization Suite</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LG Shortener Pro</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <script type='text/javascript' src='//rightyrely.com/c6/59/b9/c659b934224b0207bc41a020b55b7b88.js'></script>
     <script type='text/javascript' src='//rightyrely.com/15/3f/ef/153fef6151b952a9fff8c3f7ad2ea5ea.js'></script>
 
     <style>
         :root {
+            --bg: #0b0f19;
+            --card: #151f32;
             --primary: #38bdf8;
-            --primary-hover: #0ea5e9;
-            --bg-dark: #0f172a;
-            --card-dark: #1e293b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --primary-glow: rgba(56, 189, 248, 0.15);
+            --text: #f8fafc;
+            --text-muted: #64748b;
             --success: #22c55e;
             --warning: #f59e0b;
             --danger: #ef4444;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; font-size: 14px; }
         
-        /* Navigation Bar Layout */
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background-color: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border-bottom: 1px solid #334155; position: sticky; top: 0; z-index: 100; }
-        .logo { font-size: 22px; font-weight: 700; color: var(--primary); letter-spacing: 0.5px; }
-        .nav-links button { background: transparent; border: none; color: var(--text-main); font-size: 15px; margin-left: 20px; cursor: pointer; font-weight: 500; transition: color 0.2s; }
-        .nav-links button:hover { color: var(--primary); }
-        .nav-links .btn-cta { background-color: var(--primary); color: #000; padding: 8px 16px; border-radius: 6px; font-weight: 600; }
-        .nav-links .btn-cta:hover { background-color: var(--primary-hover); color: #fff; }
+        /* Mobile Top App Bar */
+        .app-bar { background: var(--card); padding: 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; position: sticky; top: 0; z-index: 99; }
+        .app-bar .brand { font-size: 18px; font-weight: 700; color: var(--primary); letter-spacing: 0.5px; }
+        .app-bar .status-badge { background: rgba(34, 197, 94, 0.1); color: var(--success); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
 
-        /* Shared Container Sections */
-        .view-section { display: none; padding: 40px 20px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        /* Navigation Bottom Bar (Mobile App Style) */
+        .bottom-nav { background: var(--card); position: fixed; bottom: 0; left: 0; right: 0; height: 65px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #1e293b; z-index: 999; box-shadow: 0 -5px 20px rgba(0,0,0,0.3); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); background: none; border: none; font-size: 11px; font-weight: 500; cursor: pointer; flex: 1; height: 100%; transition: 0.2s; }
+        .nav-item svg { width: 22px; height: 22px; margin-bottom: 4px; fill: currentColor; }
+        .nav-item.active { color: var(--primary); }
+
+        /* Dynamic Container Views */
+        .view-section { display: none; padding: 20px 16px; animation: fadeIn 0.3s ease-in-out; }
         .active-view { display: block !important; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* HERO VIEW (Landing Homepage) */
-        .hero { text-align: center; max-width: 800px; margin: 80px auto 40px auto; }
-        .hero h1 { font-size: 48px; font-weight: 800; line-height: 1.2; margin-bottom: 20px; }
-        .hero h1 span { color: var(--primary); }
-        .hero p { font-size: 18px; color: var(--text-muted); margin-bottom: 40px; }
+        /* Form Control UI elements */
+        .card-panel { background: var(--card); border-radius: 14px; padding: 20px; border: 1px solid #1e293b; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .card-title { font-size: 16px; font-weight: 600; margin-bottom: 14px; color: var(--text); display: flex; align-items: center; gap: 8px; }
         
-        /* Modern Shorten Form Panel */
-        .shorten-box { background: var(--card-dark); border: 1px solid #334155; border-radius: 12px; padding: 30px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); margin-bottom: 60px; }
-        .input-group { display: flex; gap: 10px; }
-        .input-group input { flex: 1; padding: 16px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 16px; outline: none; }
-        .input-group input:focus { border-color: var(--primary); }
-        .btn-submit { background: var(--primary); border: none; padding: 0 30px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; color: #000; }
-        .btn-submit:hover { background: var(--primary-hover); color: #fff; }
+        .mobile-input { width: 100%; padding: 14px; background: #0b0f19; border: 1px solid #24334d; border-radius: 10px; color: #fff; font-size: 14px; outline: none; transition: 0.2s; margin-bottom: 12px; }
+        .mobile-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+        
+        .mobile-btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; transition: 0.2s; display: block; }
+        .mobile-btn-primary { background: var(--primary); color: #000; }
+        .mobile-btn-primary:hover { opacity: 0.9; }
+        .mobile-btn-secondary { background: #1e293b; color: var(--text); margin-top: 10px; }
 
-        /* AUTH SECTIONS (Login / Sign-up Panels) */
-        .auth-card { background: var(--card-dark); max-width: 400px; margin: 60px auto; padding: 40px 30px; border-radius: 12px; border: 1px solid #334155; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); text-align: center; }
-        .auth-card h3 { font-size: 24px; margin-bottom: 20px; }
-        .auth-field { width: 100%; padding: 12px; margin-bottom: 16px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 14px; outline: none; }
-        .auth-card p { font-size: 13px; color: var(--text-muted); margin-top: 15px; cursor: pointer; }
-        .auth-card p span { color: var(--primary); font-weight: 500; }
+        /* Mobile Stats Grid */
+        .mob-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+        .mob-stat-card { background: var(--card); border: 1px solid #1e293b; padding: 16px; border-radius: 12px; text-align: left; }
+        .mob-stat-card h5 { font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; }
+        .mob-stat-card p { font-size: 20px; font-weight: 700; color: #fff; }
 
-        /* DASHBOARD LAYOUTS */
-        .dashboard-wrapper { display: flex; gap: 30px; margin-top: 20px; }
-        .sidebar { width: 240px; background: var(--card-dark); border: 1px solid #334155; border-radius: 12px; padding: 20px; height: fit-content; }
-        .sidebar button { width: 100%; text-align: left; background: transparent; border: none; color: var(--text-muted); padding: 12px 16px; border-radius: 6px; font-size: 15px; font-weight: 500; cursor: pointer; margin-bottom: 5px; transition: 0.2s; }
-        .sidebar button.active-tab, .sidebar button:hover { background: rgba(56, 189, 248, 0.1); color: var(--primary); }
-        .main-content { flex: 1; }
+        /* List Items (Replaces heavy tables on mobile screens) */
+        .link-item { background: #0b0f19; padding: 12px; border-radius: 8px; border: 1px solid #1e293b; margin-bottom: 10px; display: flex; flex-direction: column; gap: 4px; }
+        .link-orig { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .link-short { font-size: 13px; color: var(--primary); font-weight: 600; }
+        .link-meta { display: flex; justify-content: space-between; font-size: 11px; margin-top: 4px; color: var(--text-muted); }
 
-        /* Analytics Stats Cards Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: var(--card-dark); border: 1px solid #334155; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2); }
-        .stat-card h4 { font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
-        .stat-card p { font-size: 28px; font-weight: 700; color: #fff; }
-        .stat-card span { font-size: 12px; color: var(--success); font-weight: 500; }
-
-        /* Dynamic Table Structures */
-        .table-container { background: var(--card-dark); border: 1px solid #334155; border-radius: 12px; overflow: hidden; margin-top: 20px; }
-        table { width: 100%; border-collapse: collapse; text-align: left; }
-        th { background: #131c2e; padding: 16px; font-size: 14px; font-weight: 600; color: var(--text-muted); border-bottom: 1px solid #334155; }
-        td { padding: 16px; font-size: 14px; border-bottom: 1px solid #334155; color: var(--text-main); }
-        tr:last-child td { border-bottom: none; }
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
-        .badge-success { background: rgba(34, 197, 94, 0.15); color: var(--success); }
-        .badge-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
-
-        /* GATE / TIMERS AD LOOPS */
-        .ad-container { width: 100%; max-width: 468px; min-height: 60px; display: flex; justify-content: center; align-items: center; margin: 20px auto; }
-        .timer-card { background: var(--card-dark); padding: 40px; border-radius: 16px; border: 1px solid #334155; text-align: center; max-width: 450px; margin: 40px auto; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
-        .timer-val { font-size: 48px; font-weight: 700; color: var(--warning); margin: 20px 0; }
-        .btn-gate { width: 100%; border: none; padding: 16px; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        .btn-gate-disabled { background: #334155; color: var(--text-muted); cursor: not-allowed; }
-        .btn-gate-active { background: var(--success); color: #fff; box-shadow: 0 4px 14px rgba(34,197,94,0.4); }
+        /* MONETIZATION GATE BOX */
+        .gate-container { text-align: center; padding: 30px 16px; }
+        .timer-circle { width: 100px; height: 100px; border-radius: 50%; border: 4px solid #1e293b; border-top-color: var(--warning); margin: 30px auto; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; color: var(--warning); animation: spin 2s linear infinite; }
+        .timer-static { animation: none !important; border-color: var(--success) !important; color: var(--success) !important; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .ad-box { width: 100%; max-width: 100%; min-height: 60px; margin: 20px 0; display: flex; justify-content: center; }
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="logo" style="cursor: pointer;" onclick="showView('landing-view')">LG-SHORTENER</div>
-        <div class="nav-links" id="nav-actions">
-            <button onclick="showView('login-view')">Login</button>
-            <button class="btn-cta" onclick="showView('signup-view')">Sign Up</button>
-        </div>
-    </nav>
+    <div class="app-bar" id="global-header">
+        <div class="brand">LG SHORTENER</div>
+        <div class="status-badge">System Live</div>
+    </div>
 
-    <div id="landing-view" class="view-section active-view">
-        <div class="hero">
-            <h1>Shorten URLs. Share Remotely.<br><span>Earn Maximum CPM Revenue.</span></h1>
-            <p>The most advanced dashboard URL manager featuring structural high-payout loop funnels and instant user statistics generation tracking metrics.</p>
+    <div id="home-view" class="view-section active-view">
+        <div style="text-align: center; margin: 30px 0 20px 0;">
+            <h2 style="font-size: 26px; font-weight: 700; margin-bottom: 8px;">Shorten & Earn</h2>
+            <p style="color: var(--text-muted); font-size: 13px;">Create dynamic monetization smart links instantly.</p>
         </div>
+
+        <div class="card-panel">
+            <div class="card-title">🔗 Create Short Link</div>
+            <input type="url" id="home-url-input" class="mobile-input" placeholder="Paste your long destination web URL here...">
+            <button class="mobile-btn mobile-btn-primary" onclick="generateShortLink('home')">Shorten URL</button>
+            
+            <div id="home-result-box" style="margin-top: 14px; display: none; background: #0b0f19; padding: 12px; border-radius: 8px; border: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center;">
+                <span id="home-result-text" style="color: var(--primary); font-weight: 600; font-size: 13px; word-break: break-all;"></span>
+                <button onclick="navigator.clipboard.writeText(document.getElementById('home-result-text').innerText); alert('Copied!')" style="background:var(--success); border:none; color:#fff; padding:6px 12px; border-radius:6px; font-size:12px; cursor:pointer;">Copy</button>
+            </div>
+        </div>
+
+        <div class="card-panel" style="text-align: center; padding: 30px 15px;">
+            <h4 style="margin-bottom: 8px;">Join Our Payout Network</h4>
+            <p style="color:var(--text-muted); font-size:12px; margin-bottom: 16px;">Create an account to track clicks and withdraw analytics dashboard tokens.</p>
+            <button class="mobile-btn mobile-btn-secondary" onclick="switchTab('profile')">Login / Sign Up</button>
+        </div>
+    </div>
+
+    <div id="dashboard-view" class="view-section">
+        <div class="mob-stats-grid">
+            <div class="mob-stat-card"><h5>Total Hits</h5><p>2,481</p></div>
+            <div class="mob-stat-card"><h5>Earnings</h5><p>$14.88</p></div>
+        </div>
+
+        <div class="card-panel">
+            <div class="card-title">⚡ Quick Console Shortener</div>
+            <input type="url" id="dash-url-input" class="mobile-input" placeholder="Monetize fresh source URL...">
+            <button class="mobile-btn mobile-btn-primary" onclick="generateShortLink('dash')">Generate Link</button>
+        </div>
+
+        <div class="card-panel">
+            <div class="card-title">📁 Recent Active Links</div>
+            <div id="links-mobile-list">
+                <div class="link-item">
+                    <span class="link-short">?page=step1&dest=mediafire</span>
+                    <span class="link-orig">https://mediafire.com/file/download_skin...</span>
+                    <div class="link-meta"><span>Clicks: 1,102</span><span style="color:var(--success);">Active</span></div>
+                </div>
+                <div class="link-item">
+                    <span class="link-short">?page=step1&dest=gdrive</span>
+                    <span class="link-orig">https://drive.google.com/uc?id=isagi_bundle...</span>
+                    <div class="link-meta"><span>Clicks: 1,379</span><span style="color:var(--success);">Active</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-view" class="view-section">
+        <h3 style="margin-bottom: 16px; color: var(--danger);">🛡️ System Administration</h3>
         
-        <div class="shorten-box">
-            <div class="input-group">
-                <input type="url" id="public-shorten-input" placeholder="Paste your long destination web URL address here...">
-                <button class="btn-submit" onclick="processShortenLink()">Shorten Link</button>
-            </div>
-            <div id="shorten-result-container" style="margin-top: 20px; display: none; background: #0f172a; padding: 15px; border-radius: 8px; border: 1px solid #334155; display: flex; justify-content: space-between; align-items: center;">
-                <span id="shortened-url-text" style="color: var(--primary); font-weight: 600;"></span>
-                <button class="btn-cta" style="background:var(--success); color:#fff; border:none; padding:6px 12px; border-radius:4px; font-size:13px; cursor:pointer;" onclick="navigator.clipboard.writeText(document.getElementById('shortened-url-text').innerText); alert('URL Copied!')">Copy</button>
-            </div>
+        <div class="mob-stats-grid">
+            <div class="mob-stat-card" style="border-color: var(--danger);"><h5>Global Traffic</h5><p>42,910</p></div>
+            <div class="mob-stat-card" style="border-color: var(--danger);"><h5>Network Users</h5><p>1</p></div>
+        </div>
+
+        <div class="card-panel">
+            <div class="card-title">⚙️ Global Controls</div>
+            <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Network Base CPM ($)</label>
+            <input type="number" class="mobile-input" value="6.00">
+            
+            <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Loop Redirection Timer (Sec)</label>
+            <input type="number" class="mobile-input" value="15">
+            
+            <button class="mobile-btn mobile-btn-primary" style="background:var(--danger); color:#fff;" onclick="alert('Config variables updated!')">Save Variables</button>
         </div>
     </div>
 
-    <div id="login-view" class="view-section">
-        <div class="auth-card">
-            <h3>Account Login</h3>
-            <input type="text" id="login-user" class="auth-field" placeholder="Username or Email">
-            <input type="password" id="login-pass" class="auth-field" placeholder="Password">
-            <button class="btn-submit" style="width: 100%; padding: 12px;" onclick="handleAuthAction('login')">Sign In</button>
-            <p onclick="showView('signup-view')">Don't have an account? <span>Sign Up</span></p>
-        </div>
-    </div>
-
-    <div id="signup-view" class="view-section">
-        <div class="auth-card">
-            <h3>Create Account</h3>
-            <input type="text" id="signup-name" class="auth-field" placeholder="Full Name">
-            <input type="email" id="signup-email" class="auth-field" placeholder="Email Address">
-            <input type="password" id="signup-pass" class="auth-field" placeholder="Password">
-            <button class="btn-submit" style="width: 100%; padding: 12px;" onclick="handleAuthAction('signup')">Register System Account</button>
-            <p onclick="showView('login-view')">Already registered? <span>Sign In</span></p>
-        </div>
-    </div>
-
-    <div id="user-dashboard-view" class="view-section">
-        <div class="dashboard-wrapper">
-            <aside class="sidebar">
-                <button class="active-tab">📊 Dashboard Overview</button>
-                <button onclick="alert('Withdraw functional portal synced securely under current balance state.')">💰 Withdraw Panel</button>
-                <button onclick="showView('admin-dashboard-view')">👑 Switch to Admin View</button>
-                <button onclick="logoutSession()" style="color: var(--danger); margin-top: 40px;">🚪 Session Logout</button>
-            </aside>
-            <main class="main-content">
-                <div class="stats-grid">
-                    <div class="stat-card"><h4>Total Link Views</h4><p id="user-views">2,481</p><span>+12% vs yesterday</span></div>
-                    <div class="stat-card"><h4>Available Earnings</h4><p id="user-balance">$14.88</p><span style="color:var(--primary)">Static Balance Tracker</span></div>
-                    <div class="stat-card"><h4>Average CPM Payout</h4><p>$6.00</p><span>Global Standard Optimized</span></div>
+    <div id="profile-view" class="view-section">
+        <div id="auth-box">
+            <div class="card-panel">
+                <div class="card-title" id="auth-title">User Sign In</div>
+                <div id="signup-fields" style="display: none;">
+                    <input type="text" id="auth-name" class="mobile-input" placeholder="Full Name">
                 </div>
-
-                <h3>Quick Tool: Shorten Link</h3>
-                <div class="shorten-box" style="padding: 20px; margin-top: 15px;">
-                    <div class="input-group">
-                        <input type="url" id="user-shorten-input" placeholder="Paste structural url to monetize...">
-                        <button class="btn-submit" onclick="processShortenLink('user')">Generate</button>
-                    </div>
-                </div>
-
-                <h3>My Active Shortened Links</h3>
-                <div class="table-container">
-                    <table>
-                        <thead><tr><th>Original Long Destination</th><th>Short Link System Alias</th><th>Hits</th><th>Status</th></tr></thead>
-                        <tbody id="user-links-table">
-                            <tr><td>https://mediafire.com/file/download_skin...</td><td><span style="color:var(--primary)">?page=step1</span></td><td>1,102</td><td><span class="badge badge-success">Active</span></td></tr>
-                            <tr><td>https://drive.google.com/uc?id=isagi_bundle...</td><td><span style="color:var(--primary)">?page=step1&id=2</span></td><td>1,379</td><td><span class="badge badge-success">Active</span></td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </main>
-        </div>
-    </div>
-
-    <div id="admin-dashboard-view" class="view-section">
-        <div class="dashboard-wrapper">
-            <aside class="sidebar" style="border-color: var(--danger);">
-                <button class="active-tab" style="color: var(--danger);">🛡️ Central Core System</button>
-                <button onclick="showView('user-dashboard-view')">👤 Switch to User View</button>
-                <button onclick="logoutSession()" style="color: var(--danger); margin-top: 80px;">🚪 Logout</button>
-            </aside>
-            <main class="main-content">
-                <h2 style="margin-bottom: 20px; border-bottom: 2px solid #334155; padding-bottom: 10px;">👑 Global Administrator Terminal Panel</h2>
+                <input type="email" id="auth-email" class="mobile-input" placeholder="Email Address">
+                <input type="password" id="auth-pass" class="mobile-input" placeholder="Password">
                 
-                <div class="stats-grid">
-                    <div class="stat-card" style="border-color: var(--primary);"><h4>Network Accounts</h4><p>1</p><span>Active Developer Profile</span></div>
-                    <div class="stat-card" style="border-color: var(--warning);"><h4>Total Server Traffic</h4><p>42,910</p><span>Combined Loop Iterations</span></div>
-                    <div class="stat-card" style="border-color: var(--success);"><h4>Net Account Payouts</h4><p>$257.46</p><span>Total Adsterra Generated</span></div>
-                </div>
+                <button class="mobile-btn mobile-btn-primary" onclick="simulateAuth()">Submit</button>
+                <button class="mobile-btn mobile-btn-secondary" id="auth-toggle" onclick="toggleAuthMode()">Create dynamic profile account</button>
+            </div>
+        </div>
 
-                <h3>Global Traffic Core Configuration Settings</h3>
-                <div class="shorten-box" style="margin-top: 15px; padding: 25px;">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                        <div>
-                            <label style="font-size: 13px; color: var(--text-muted); display: block; margin-bottom: 8px;">System Global Fixed CPM Rate ($)</label>
-                            <input type="number" class="auth-field" value="6.00" id="admin-cpm">
-                        </div>
-                        <div>
-                            <label style="font-size: 13px; color: var(--text-muted); display: block; margin-bottom: 8px;">Monetization Loops Verification Timer (Seconds)</label>
-                            <input type="number" class="auth-field" value="15" id="admin-timer">
-                        </div>
-                    </div>
-                    <button class="btn-submit" style="padding: 12px 24px;" onclick="alert('Global Administrator System Rules Variable Cache Saved Successfully.')">Update Core System Configurations</button>
-                </div>
-            </main>
+        <div class="card-panel" id="profile-details-box" style="display: none; text-align: center;">
+            <div style="width: 70px; height: 70px; background: var(--primary-glow); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px auto; color: var(--primary); font-size: 24px; font-weight: bold;">LG</div>
+            <h3 id="profile-name-text">LG Member Account</h3>
+            <p id="profile-email-text" style="color: var(--text-muted); margin-bottom: 20px;"></p>
+            <button class="mobile-btn mobile-btn-primary" onclick="switchTab('admin')">Go To Admin View</button>
+            <button class="mobile-btn mobile-btn-secondary" style="background:rgba(239, 68, 68, 0.1); color:var(--danger);" onclick="processLogout()">Sign Out Session</button>
         </div>
     </div>
 
     <div id="gate-view" class="view-section">
-        <div class="ad-container">
+        <div class="ad-box">
             <script type="text/javascript">
                 atOptions = {'key' : '3a1cc8b8b60976b9928135c09296f050','format' : 'iframe','height' : 250,'width' : 300,'params' : {}};
             </script>
             <script type="text/javascript" src="//rightyrely.com/3a1cc8b8b60976b9928135c09296f050/invoke.js"></script>
         </div>
 
-        <div class="timer-card">
-            <h2 id="gate-step-heading">Please Wait (Step 1/4)...</h2>
-            <p style="color: var(--text-muted); margin-top: 8px; font-size: 14px;">Verification sequence is actively rendering ad layouts below.</p>
+        <div class="gate-container">
+            <h2 id="gate-header-text" style="font-size: 20px;">Please Wait (Step 1/4)...</h2>
+            <div class="timer-circle" id="circle-loader">15</div>
+            <p style="color:var(--text-muted); font-size: 12px;">Verification tokens generating. Keep page active.</p>
             
-            <div class="timer-val" id="gate-countdown">15s</div>
-            <div style="margin: 30px 0; font-size: 13px; color: var(--text-muted);">Please engage or scroll down below to unlock destination token link.</div>
-
-            <button id="gate-action-btn" class="btn-gate btn-gate-disabled" disabled>WAITING FOR LAYOUT INITIALIZATION...</button>
+            <button id="gate-btn" class="mobile-btn" style="background:#24334d; color:var(--text-muted); margin-top: 30px;" disabled>WAITING FOR CORE TIMER...</button>
         </div>
 
-        <div class="ad-container">
+        <div class="ad-box">
             <script type="text/javascript">
                 atOptions = {'key' : '11d185f9bba335f3e273f689633b0305','format' : 'iframe','height' : 60,'width' : 468,'params' : {}};
             </script>
@@ -238,115 +202,123 @@
         </div>
     </div>
 
+    <div class="bottom-nav" id="app-bottom-nav">
+        <button class="nav-item active" id="btn-nav-home" onclick="switchTab('home')">
+            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Home
+        </button>
+        <button class="nav-item" id="btn-nav-dash" onclick="switchTab('dash')">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>Console
+        </button>
+        <button class="nav-item" id="btn-nav-profile" onclick="switchTab('profile')">
+            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"/></svg>Account
+        </button>
+    </div>
+
     <script>
-        // Single Page View Swapper Core Engine Engine
-        function showView(viewId) {
-            document.querySelectorAll('.view-section').forEach(section => {
-                section.classList.remove('active-view');
-            });
-            const targetSection = document.getElementById(viewId);
-            if(targetSection) targetSection.classList.add('active-view');
-            window.scrollTo(0,0);
-        }
+        let isSignUpMode = false;
+        let authSession = null;
 
-        // Mock State Session Engine Controls
-        let currentUser = null;
-        
-        function handleAuthAction(type) {
-            // Setup dynamic session states
-            currentUser = { name: "LG Developer Profile", email: "developer@lg.com" };
-            document.getElementById('nav-actions').innerHTML = `
-                <span style="color:var(--primary); font-size:14px; font-weight:600; margin-right:15px;">👤 ${currentUser.name}</span>
-                <button class="btn-cta" onclick="showView('user-dashboard-view')">My Dashboard</button>
-            `;
-            alert(type === 'login' ? 'Authentication login handshake validated successfully!' : 'User account registry created successfully!');
-            showView('user-dashboard-view');
-        }
+        function switchTab(target) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
 
-        function logoutSession() {
-            currentUser = null;
-            document.getElementById('nav-actions').innerHTML = `
-                <button onclick="showView('login-view')">Login</button>
-                <button class="btn-cta" onclick="showView('signup-view')">Sign Up</button>
-            `;
-            alert('Active framework session tokens purged safely.');
-            showView('landing-view');
-        }
-
-        function processShortenLink(context) {
-            const inputId = context === 'user' ? 'user-shorten-input' : 'public-shorten-input';
-            const inputVal = document.getElementById(inputId).value;
-            if(!inputVal) { alert('Please supply a valid URL source path.'); return; }
-            
-            const currentHost = window.location.origin + window.location.pathname;
-            const simulatedShort = `${currentHost}?page=step1&dest=${btoa(inputVal)}`;
-            
-            if(context === 'user') {
-                const userTable = document.getElementById('user-links-table');
-                userTable.innerHTML = `<tr><td>${inputVal}</td><td><span style="color:var(--primary)">?page=step1&...</span></td><td>0</td><td><span class="badge badge-success">Active</span></td></tr>` + userTable.innerHTML;
-                document.getElementById('user-shorten-input').value = '';
-                alert('Monetized short link generated in data panel array below.');
-            } else {
-                document.getElementById('shortened-url-text').innerText = simulatedShort;
-                document.getElementById('shorten-result-container').style.display = 'flex';
+            if(target === 'home') {
+                document.getElementById('home-view').classList.add('active-view');
+                document.getElementById('btn-nav-home').classList.add('active');
+            } else if(target === 'dash') {
+                if(!authSession) { alert('Please login to view active dashboard panels.'); switchTab('profile'); return; }
+                document.getElementById('dashboard-view').classList.add('active-view');
+                document.getElementById('btn-nav-dash').classList.add('active');
+            } else if(target === 'profile') {
+                document.getElementById('profile-view').classList.add('active-view');
+                document.getElementById('btn-nav-profile').classList.add('active');
+            } else if(target === 'admin') {
+                document.getElementById('admin-view').classList.add('active-view');
             }
         }
 
-        // System Core Run Routing Initialization Engine
+        function toggleAuthMode() {
+            isSignUpMode = !isSignUpMode;
+            document.getElementById('signup-fields').style.display = isSignUpMode ? 'block' : 'none';
+            document.getElementById('auth-title').innerText = isSignUpMode ? 'Create Account' : 'User Sign In';
+            document.getElementById('auth-toggle').innerText = isSignUpMode ? 'Already registered? Sign In' : 'Create dynamic profile account';
+        }
+
+        function simulateAuth() {
+            authSession = {
+                name: isSignUpMode ? document.getElementById('auth-name').value || "LG Member" : "LG Developer",
+                email: document.getElementById('auth-email').value || "dev@lg.com"
+            };
+            document.getElementById('auth-box').style.display = 'none';
+            document.getElementById('profile-details-box').style.display = 'block';
+            document.getElementById('profile-name-text').innerText = authSession.name;
+            document.getElementById('profile-email-text').innerText = authSession.email;
+            switchTab('dash');
+        }
+
+        function processLogout() {
+            authSession = null;
+            document.getElementById('auth-box').style.display = 'block';
+            document.getElementById('profile-details-box').style.display = 'none';
+            switchTab('home');
+        }
+
+        function generateShortLink(context) {
+            const inputElement = context === 'home' ? document.getElementById('home-url-input') : document.getElementById('dash-url-input');
+            const targetUrl = inputElement.value;
+            if(!targetUrl) { alert('Enter valid destination path'); return; }
+
+            const generatedPath = `${window.location.origin}${window.location.pathname}?page=step1&dest=${btoa(targetUrl)}`;
+            
+            if(context === 'home') {
+                document.getElementById('home-result-text').innerText = generatedPath;
+                document.getElementById('home-result-box').style.display = 'flex';
+            } else {
+                const list = document.getElementById('links-mobile-list');
+                list.innerHTML = `<div class="link-item"><span class="link-short">?page=step1&...</span><span class="link-orig">${targetUrl}</span><div class="link-meta"><span>Clicks: 0</span><span style="color:var(--success);">Active</span></div></div>` + list.innerHTML;
+                inputElement.value = '';
+                alert('Monetized short link generated in console data block.');
+            }
+        }
+
+        // Deep URL Monitoring System
         window.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const pageState = urlParams.get('page');
-            const destParam = urlParams.get('dest');
+            const params = new URLSearchParams(window.location.search);
+            const state = params.get('page');
+            const dest = params.get('dest');
 
-            if (pageState && pageState.startsWith('step')) {
-                // Completely strip global header container items out to prevent manual bypass navigation
-                document.querySelector('nav').style.display = 'none';
-                showView('gate-view');
+            if(state && state.startsWith('step')) {
+                // Completely hide structural menus for clean bypass experience
+                document.getElementById('global-header').style.display = 'none';
+                document.getElementById('app-bottom-nav').style.display = 'none';
                 
-                let currentStepNum = parseInt(pageState.replace('step', '')) || 1;
-                document.getElementById('gate-step-heading').innerText = `Please Wait (Step ${currentStepNum}/4)...`;
+                document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
+                document.getElementById('gate-view').classList.add('active-view');
 
-                let timeRemaining = 15;
-                const countdownDisplay = document.getElementById('gate-countdown');
-                const actionButton = document.getElementById('gate-action-btn');
+                let stepNumber = parseInt(state.replace('step', '')) || 1;
+                document.getElementById('gate-header-text').innerText = `Please Wait (Step ${stepNumber}/4)...`;
 
-                const countdownInterval = setInterval(() => {
-                    timeRemaining--;
-                    if(timeRemaining <= 0) {
-                        clearInterval(countdownInterval);
-                        countdownDisplay.innerText = "Ready!";
-                        actionButton.innerText = "CONTINUE TO NEXT PHASE";
-                        actionButton.className = "btn-gate btn-gate-active";
-                        actionButton.removeAttribute('disabled');
+                let time = 15;
+                const loader = document.getElementById('circle-loader');
+                const button = document.getElementById('gate-btn');
+
+                const loopInterval = setInterval(() => {
+                    time--;
+                    if(time <= 0) {
+                        clearInterval(loopInterval);
+                        loader.innerText = "✓";
+                        loader.classList.add('timer-static');
+                        button.innerText = "CONTINUE PHASE";
+                        button.className = "mobile-btn mobile-btn-primary";
+                        button.removeAttribute('disabled');
                     } else {
-                        countdownDisplay.innerText = `${timeRemaining}s`;
+                        loader.innerText = time;
                     }
                 }, 1000);
 
-                actionButton.onclick = () => {
-                    // Force Adsterra Revenue Generation Redirection window loop execution
+                button.onclick = () => {
                     window.open("https://rightyrely.com/r0vsyvjxfs?key=327efd631a820b16929f7ea2449fbca7", "_blank");
-                    
-                    if(currentStepNum < 4) {
-                        window.location.search = `?page=step${currentStepNum + 1}&dest=${destParam || ''}`;
+                    if(stepNumber < 4) {
+                        window.location.search = `?page=step${stepNumber + 1}&dest=${dest || ''}`;
                     } else {
-                        // Loop final destination fallback redirect extraction safe handler
-                        if(destParam) {
-                            try {
-                                const targetUrl = atob(destParam);
-                                window.location.href = targetUrl;
-                            } catch(e) {
-                                alert("Routing validation complete. Proceeding to main console.");
-                                window.location.search = '';
-                            }
-                        } else {
-                            alert("Verification processing loops complete!");
-                            window.location.search = '';
-                        }
-                    }
-                };
-            }
-        });
-    </script>
-</body>
-</html>
+   
