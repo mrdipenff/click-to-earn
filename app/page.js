@@ -1,6 +1,5 @@
 'use client';
-import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
 import { 
   signInWithEmailAndPassword, 
@@ -18,8 +17,7 @@ import {
   doc
 } from 'firebase/firestore';
 
-function ShortenerAppContent() {
-  const searchParams = useSearchParams();
+export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [user, setUser] = useState(null);
   const [email, setEmail] = useState('');
@@ -34,42 +32,45 @@ function ShortenerAppContent() {
   const [adminStats, setAdminStats] = useState({ totalUsers: 1, totalClicks: 1490 });
   const [isRedirecting, setIsRedirecting] = useState(false);
 
-  // 🚀 Real-Time Transparent Redirection Loop Engine
+  // 🚀 Absolute Direct Redirect Engine (Using Direct URL Parsing)
   useEffect(() => {
     const handleRedirect = async () => {
-      const goParam = searchParams.get('go');
-      const destParam = searchParams.get('dest');
-      
-      if (goParam && destParam) {
-        setIsRedirecting(true);
-        try {
-          const decodedUrl = atob(destParam);
-          
-          // Firestore mein check karke hits/clicks auto-increment loop chalana
-          const q = query(collection(db, "links"), where("alias", "==", goParam));
-          const querySnapshot = await getDocs(q);
-          
-          if (!querySnapshot.empty) {
-            const linkDoc = querySnapshot.docs[0];
-            const currentClicks = linkDoc.data().clicks || 0;
+      if (typeof window !== 'undefined') {
+        const urlParams = new URLSearchParams(window.location.search);
+        const goParam = urlParams.get('go');
+        const destParam = urlParams.get('dest');
+        
+        if (goParam && destParam) {
+          setIsRedirecting(true);
+          try {
+            const decodedUrl = atob(destParam);
             
-            await updateDoc(doc(db, "links", linkDoc.id), {
-              clicks: currentClicks + 1
-            });
+            // Increment click logic inside Firestore
+            const q = query(collection(db, "links"), where("alias", "==", goParam));
+            const querySnapshot = await getDocs(q);
+            
+            if (!querySnapshot.empty) {
+              const linkDoc = querySnapshot.docs[0];
+              const currentClicks = linkDoc.data().clicks || 0;
+              
+              await updateDoc(doc(db, "links", linkDoc.id), {
+                clicks: currentClicks + 1
+              });
+            }
+            
+            // Direct Hard Redirect to original URL
+            window.location.replace(decodedUrl);
+          } catch (err) {
+            console.error("Redirection tracking failed:", err);
+            setIsRedirecting(false);
           }
-          
-          // Real destination window forward route
-          window.location.href = decodedUrl;
-        } catch (err) {
-          console.error("Redirection failure:", err);
-          setIsRedirecting(false);
         }
       }
     };
     handleRedirect();
-  }, [searchParams]);
+  }, []);
 
-  // Sync Auth User Tokens
+  // Sync Secure User Auth Token State
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
@@ -112,7 +113,7 @@ function ShortenerAppContent() {
         setIsSignUp(false);
       } else {
         await signInWithEmailAndPassword(auth, email, password);
-        alert("Session Handshake Authorized!");
+        alert("Welcome Back!");
         setActiveTab('dash');
       }
     } catch (err) {
@@ -142,9 +143,9 @@ function ShortenerAppContent() {
         });
         setLongUrl('');
         fetchUserData(user);
-        alert("Monetized link appended successfully!");
+        alert("Monetized link generated!");
       } catch (e) {
-        alert("Error mapping transaction database.");
+        alert("Database error.");
       }
     } else {
       setGeneratedLink(shortUrl);
@@ -168,7 +169,6 @@ function ShortenerAppContent() {
   return (
     <div style={{ backgroundColor: '#090d16', color: '#f1f5f9', minHeight: '100vh', paddingBottom: '90px', fontFamily: '"Inter", system-ui, sans-serif', overflowX: 'hidden' }}>
       
-      {/* Premium Professional Fluid Framework Architecture UI CSS */}
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         .saas-card { background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 16px; }
@@ -181,18 +181,18 @@ function ShortenerAppContent() {
         .tab-active { color: #38bdf8 !important; font-weight: 600; }
       `}} />
 
-      {/* Corporate Modern Top Bar */}
+      {/* Top Navigation Bar Bar */}
       <div style={{ background: '#111827', padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #1f2937' }}>
         <span style={{ fontSize: '18px', fontWeight: '700', color: '#38bdf8', letterSpacing: '-0.5px' }}>LG SHORTENER PRO</span>
         <span style={{ background: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8', padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: '600' }}>Cloud Node Active</span>
       </div>
 
-      {/* ================= VIEW 1: PROFESSIONAL CLEAN HOME ================= */}
+      {/* ================= VIEW 1: PREMIUM HOME ================= */}
       {activeTab === 'home' && (
         <div style={{ padding: '24px 16px' }}>
           <div style={{ textAlign: 'center', margin: '30px 0 25px 0' }}>
             <h2 style={{ fontSize: '28px', fontWeight: '700', letterSpacing: '-0.5px', color: '#fff' }}>Shorten Links, Earn Payouts</h2>
-            <p style={{ color: '#94a3b8', fontSize: '14px', marginTop: '6px', fontWeight: '400' }}>High CPM optimization network engine console.</p>
+            <p style={{ color: '#94a3b8', fontSize: '14px', marginTop: '6px' }}>High CPM optimization network engine console.</p>
           </div>
 
           <div className="saas-card">
@@ -214,15 +214,24 @@ function ShortenerAppContent() {
             )}
           </div>
 
-          <div className="saas-card" style={{ textAlign: 'center', marginTop: '12px' }}>
-            <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: '600' }}>Maximize Your Traffic Payouts</h4>
-            <p style={{ color: '#94a3b8', fontSize: '12px', margin: '0 0 14px 0' }}>Create a static member cloud profile to unlock advanced dashboards.</p>
-            <button className="saas-btn-sec" onClick={() => setActiveTab('profile')}>Sign In / Register Portal</button>
-          </div>
+          {/* DYNAMIC VIEW CONDITION: Hides auth box completely if login state is true */}
+          {!user ? (
+            <div className="saas-card" style={{ textAlign: 'center', marginTop: '12px' }}>
+              <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: '600' }}>Maximize Your Traffic Payouts</h4>
+              <p style={{ color: '#94a3b8', fontSize: '12px', margin: '0 0 14px 0' }}>Create a static member cloud profile to unlock advanced dashboards.</p>
+              <button className="saas-btn-sec" onClick={() => setActiveTab('profile')}>Sign In / Register Portal</button>
+            </div>
+          ) : (
+            <div className="saas-card" style={{ textAlign: 'center', marginTop: '12px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+              <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: '600', color: '#10b981' }}>✓ Account Session Authenticated</h4>
+              <p style={{ color: '#94a3b8', fontSize: '12px', margin: '0 0 14px 0' }}>Aapka account successfully login hai. Console open karein.</p>
+              <button className="saas-btn" style={{ background: '#10b981', color: '#fff' }} onClick={() => setActiveTab('dash')}>Open Workspace Console</button>
+            </div>
+          )}
         </div>
       )}
 
-      {/* ================= VIEW 2: EXECUTIVE DASHBOARD CONSOLE ================= */}
+      {/* ================= VIEW 2: DASHBOARD CONSOLE ================= */}
       {activeTab === 'dash' && (
         <div style={{ padding: '20px 16px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
@@ -241,7 +250,7 @@ function ShortenerAppContent() {
             <input 
               type="url" 
               className="saas-input"
-              placeholder="Paste long link target target path..." 
+              placeholder="Paste long link target path..." 
               value={longUrl}
               onChange={(e) => setLongUrl(e.target.value)}
             />
@@ -268,7 +277,7 @@ function ShortenerAppContent() {
         </div>
       )}
 
-      {/* ================= VIEW 3: CLEAN SECURE USER AUTH ================= */}
+      {/* ================= VIEW 3: USER PROFILE AUTH ================= */}
       {activeTab === 'profile' && (
         <div style={{ padding: '24px 16px' }}>
           {!user ? (
@@ -279,7 +288,7 @@ function ShortenerAppContent() {
               {isSignUp && (
                 <input type="text" placeholder="Your Name" className="saas-input" value={name} onChange={(e) => setName(e.target.value)} />
               )}
-              <input type="email" placeholder="Email Address" className="saas-input" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <input type="email" placeholder="Email Address" className="saas-input" value={email} onChange={{(e) => setEmail(e.target.value)}} />
               <input type="password" placeholder="Account Access Token" className="saas-input" value={password} onChange={(e) => setPassword(e.target.value)} />
               
               <button className="saas-btn" style={{ marginTop: '6px' }} onClick={handleAuth}>{isSignUp ? "Confirm Dynamic Registration" : "Authenticate Session Gateway"}</button>
@@ -302,7 +311,7 @@ function ShortenerAppContent() {
         </div>
       )}
 
-      {/* ================= VIEW 4: SYSTEM MASTER ADMIN CORE ================= */}
+      {/* ================= VIEW 4: MASTER CENTRAL ADMIN CORE ================= */}
       {activeTab === 'admin' && (
         <div style={{ padding: '20px 16px' }}>
           <h3 style={{ color: '#ef4444', margin: '0 0 16px 0', fontSize: '20px', fontWeight: '700' }}>🛡️ Central Core System Admin</h3>
@@ -325,7 +334,7 @@ function ShortenerAppContent() {
         </div>
       )}
 
-      {/* Flat Executive Sticky Bottom Bar */}
+      {/* Flat Executive Sticky Bottom Navigation */}
       <div style={{ background: '#111827', position: 'fixed', bottom: 0, left: 0, right: 0, height: '65px', display: 'flex', borderTop: '1px solid #1f2937', zIndex: 99999 }}>
         <button className={`tab-bar-item ${activeTab === 'home' ? 'tab-active' : ''}`} onClick={() => setActiveTab('home')}>
           <span style={{ fontSize: '16px', marginBottom: '2px' }}>🏠</span>
@@ -343,17 +352,4 @@ function ShortenerAppContent() {
 
     </div>
   );
-}
-
-export default function App() {
-  return (
-    <Suspense fallback={
-      <div style={{ backgroundColor: '#090d16', color: '#fff', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        Loading engine components...
-      </div>
-    }>
-      <ShortenerAppContent />
-    </Suspense>
-  );
-    }
-        
+        }
