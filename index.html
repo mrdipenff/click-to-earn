@@ -64,7 +64,7 @@
 
     <div class="app-bar" id="global-header">
         <div class="brand">LG SHORTENER</div>
-        <div class="status-badge">App Mode Ready</div>
+        <div class="status-badge">App System Online</div>
     </div>
 
     <div id="home-view" class="view-section active-view">
@@ -173,6 +173,7 @@
         let isSignUpMode = false;
         let loggedInUser = null;
 
+        // Seed virtual user database instantly
         if (!localStorage.getItem('lg_users')) {
             const defaultUsers = {
                 'admin@lg.com': { name: 'LG Admin Base', pass: 'admin123', email: 'admin@lg.com', role: 'admin', clicks: 2480, earnings: 14.88, links: [] }
@@ -180,24 +181,33 @@
             localStorage.setItem('lg_users', JSON.stringify(defaultUsers));
         }
 
+        // ABSOLUTE FIX: Pure dynamic toggle mechanism bypassing browser layout bugs
         function switchTab(target) {
-            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            // Hide everything first
+            document.getElementById('home-view').style.display = 'none';
+            document.getElementById('dashboard-view').style.display = 'none';
+            document.getElementById('admin-view').style.display = 'none';
+            document.getElementById('profile-view').style.display = 'none';
+
+            // Remove all active classes
+            document.getElementById('btn-nav-home').classList.remove('active');
+            document.getElementById('btn-nav-dash').classList.remove('active');
+            document.getElementById('btn-nav-profile').classList.remove('active');
 
             if(target === 'home') {
-                document.getElementById('home-view').classList.add('active-view');
+                document.getElementById('home-view').style.display = 'block';
                 document.getElementById('btn-nav-home').classList.add('active');
             } else if(target === 'dash') {
                 if(!loggedInUser) { 
-                    alert('Please login to access your console dashboard panel!'); 
+                    alert('Please login first to view the dashboard.'); 
                     switchTab('profile'); 
                     return; 
                 }
-                document.getElementById('dashboard-view').classList.add('active-view');
+                document.getElementById('dashboard-view').style.display = 'block';
                 document.getElementById('btn-nav-dash').classList.add('active');
                 renderUserLinks();
             } else if(target === 'profile') {
-                document.getElementById('profile-view').classList.add('active-view');
+                document.getElementById('profile-view').style.display = 'block';
                 document.getElementById('btn-nav-profile').classList.add('active');
                 
                 if(!loggedInUser) {
@@ -208,7 +218,7 @@
                     document.getElementById('profile-details-box').style.display = 'block';
                 }
             } else if(target === 'admin') {
-                document.getElementById('admin-view').classList.add('active-view');
+                document.getElementById('admin-view').style.display = 'block';
             }
         }
 
@@ -220,15 +230,15 @@
             document.getElementById('auth-toggle-btn').innerText = isSignUpMode ? 'Already registered? Sign In' : 'Create dynamic profile account';
         }
 
-        // Bulletproof Event Listeners (Safe from Ad Freeze)
-        document.getElementById('btn-nav-home').addEventListener('click', () => switchTab('home'));
-        document.getElementById('btn-nav-dash').addEventListener('click', () => switchTab('dash'));
-        document.getElementById('btn-nav-profile').addEventListener('click', () => switchTab('profile'));
-        document.getElementById('btn-go-auth').addEventListener('click', () => switchTab('profile'));
-        document.getElementById('auth-toggle-btn').addEventListener('click', () => toggleAuthMode());
-        document.getElementById('admin-portal-btn').addEventListener('click', () => switchTab('admin'));
+        // Explicit Direct JavaScript Trigger Action Hooks
+        document.getElementById('btn-nav-home').onclick = () => switchTab('home');
+        document.getElementById('btn-nav-dash').onclick = () => switchTab('dash');
+        document.getElementById('btn-nav-profile').onclick = () => switchTab('profile');
+        document.getElementById('btn-go-auth').onclick = () => switchTab('profile');
+        document.getElementById('auth-toggle-btn').onclick = () => toggleAuthMode();
+        document.getElementById('admin-portal-btn').onclick = () => switchTab('admin');
 
-        document.getElementById('auth-submit-btn').addEventListener('click', function() {
+        document.getElementById('auth-submit-btn').onclick = function() {
             const email = document.getElementById('auth-email').value.trim();
             const pass = document.getElementById('auth-pass').value.trim();
             const db = JSON.parse(localStorage.getItem('lg_users'));
@@ -261,15 +271,15 @@
                     alert('Invalid credentials.');
                 }
             }
-        });
+        };
 
-        document.getElementById('btn-logout').addEventListener('click', function() {
+        document.getElementById('btn-logout').onclick = function() {
             loggedInUser = null;
             switchTab('home');
-        });
+        };
 
-        document.getElementById('btn-home-shorten').addEventListener('click', () => generateShortLink('home'));
-        document.getElementById('btn-dash-shorten').addEventListener('click', () => generateShortLink('dash'));
+        document.getElementById('btn-home-shorten').onclick = () => generateShortLink('home');
+        document.getElementById('btn-dash-shorten').onclick = () => generateShortLink('dash');
 
         function generateShortLink(context) {
             const inputElement = context === 'home' ? document.getElementById('home-url-input') : document.getElementById('dash-url-input');
@@ -310,23 +320,18 @@
             });
         }
 
-        document.getElementById('btn-admin-save').addEventListener('click', () => alert('Settings Saved.'));
-        document.getElementById('btn-copy-link').addEventListener('click', () => {
+        document.getElementById('btn-admin-save').onclick = () => alert('Settings Saved.');
+        document.getElementById('btn-copy-link').onclick = () => {
             navigator.clipboard.writeText(document.getElementById('home-result-text').innerText);
             alert('Copied!');
-        });
+        };
 
-        // Safe Deferred Ad Injector
-        function injectAdsterraScripts() {
-            const popunder = document.createElement('script');
-            popunder.src = '//rightyrely.com/c6/59/b9/c659b934224b0207bc41a020b55b7b88.js';
-            document.body.appendChild(popunder);
+        // Router Watcher Initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const state = params.get('page');
+            const dest = params.get('dest');
 
-            const socialbar = document.createElement('script');
-            socialbar.src = '//rightyrely.com/15/3f/ef/153fef6151b952a9fff8c3f7ad2ea5ea.js';
-            document.body.appendChild(socialbar);
-
-            document.getElementById('gate-ad-top').innerHTML = `
-                <iframe src="about:blank" style="width:300px; height:250px; border:none;" id="ad-top-frame"></iframe>
-            `;
-            const frameDoc = document.getElementById('ad-top-frame'
+            if(state && state.startsWith('step')) {
+                document.getElementById('global-header').style.display = 'none';
+                document.getElementBy
