@@ -63,8 +63,8 @@ export default function App() {
     const currentHost = window.location.origin;
     const shortAlias = Math.random().toString(36).substring(2, 7);
     
-    // 🔗 Ab link user ko seedhe Stage 1 page par bhejegi (/visit/alias)
-    const shortUrl = `${currentHost}/visit/${shortAlias}?dest=${btoa(longUrl)}`;
+    // 🔗 Fixed Absolute Path: URL ke andar se destination parameters completely delete!
+    const shortUrl = `${currentHost}/visit/${shortAlias}`;
 
     const newLinkObject = { originalUrl: longUrl, shortUrl: shortUrl, alias: shortAlias, clicks: 0 };
 
@@ -74,7 +74,7 @@ export default function App() {
     } else {
       setHomeLinks([newLinkObject, ...homeLinks]);
     }
-    setLongUrl(''); // Clear input box
+    setLongUrl(''); 
   };
 
   return (
@@ -105,7 +105,6 @@ export default function App() {
         </div>
       )}
 
-      {/* Tabs Navigation */}
       <div style={{ background: '#111827', position: 'fixed', bottom: 0, left: 0, right: 0, height: '60px', display: 'flex', borderTop: '1px solid #1f2937' }}>
         <button style={{ flex: 1, background: 'none', border: 'none', color: '#fff' }} onClick={() => setActiveTab('home')}>Home</button>
         <button style={{ flex: 1, background: 'none', border: 'none', color: '#fff' }} onClick={() => setActiveTab('profile')}>Account</button>
@@ -113,4 +112,4 @@ export default function App() {
     </div>
   );
         }
-            
+                                    
