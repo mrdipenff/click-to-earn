@@ -3,180 +3,350 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Please Wait...</title>
+    <title>LG-Shortener | Professional URL Manager & Monetization Suite</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <script type='text/javascript' src='//rightyrely.com/c6/59/b9/c659b934224b0207bc41a020b55b7b88.js'></script>
     <script type='text/javascript' src='//rightyrely.com/15/3f/ef/153fef6151b952a9fff8c3f7ad2ea5ea.js'></script>
 
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            background-color: #0f172a;
-            color: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
+        :root {
+            --primary: #38bdf8;
+            --primary-hover: #0ea5e9;
+            --bg-dark: #0f172a;
+            --card-dark: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
         }
-        .ad-container {
-            width: 100%;
-            max-width: 468px;
-            min-height: 60px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 20px 0;
-        }
-        .card {
-            background-color: #1e293b;
-            padding: 40px 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            text-align: center;
-            width: 100%;
-            max-width: 450px;
-        }
-        h2 { font-size: 24px; margin-bottom: 10px; color: #38bdf8; }
-        p { font-size: 14px; color: #94a3b8; margin-bottom: 20px; }
-        .timer { font-size: 48px; font-weight: bold; color: #f59e0b; margin: 20px 0; }
-        .gap-space { margin: 40px 0; font-size: 12px; color: #64748b; }
-        .btn {
-            width: 100%;
-            border: none;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .btn-success {
-            background-color: #22c55e;
-            color: #fff;
-            box-shadow: 0 4px 12px rgba(34,197,94,0.4);
-        }
-        .btn-disabled {
-            background-color: #334155;
-            color: #64748b;
-            cursor: not-allowed;
-        }
-        #gate-ui { display: none; }
-        #dashboard-ui { display: none; width: 100%; max-width: 1000px; margin: 0 auto; }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
+        
+        /* Navigation Bar Layout */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background-color: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border-bottom: 1px solid #334155; position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 22px; font-weight: 700; color: var(--primary); letter-spacing: 0.5px; }
+        .nav-links button { background: transparent; border: none; color: var(--text-main); font-size: 15px; margin-left: 20px; cursor: pointer; font-weight: 500; transition: color 0.2s; }
+        .nav-links button:hover { color: var(--primary); }
+        .nav-links .btn-cta { background-color: var(--primary); color: #000; padding: 8px 16px; border-radius: 6px; font-weight: 600; }
+        .nav-links .btn-cta:hover { background-color: var(--primary-hover); color: #fff; }
+
+        /* Shared Container Sections */
+        .view-section { display: none; padding: 40px 20px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .active-view { display: block !important; }
+
+        /* HERO VIEW (Landing Homepage) */
+        .hero { text-align: center; max-width: 800px; margin: 80px auto 40px auto; }
+        .hero h1 { font-size: 48px; font-weight: 800; line-height: 1.2; margin-bottom: 20px; }
+        .hero h1 span { color: var(--primary); }
+        .hero p { font-size: 18px; color: var(--text-muted); margin-bottom: 40px; }
+        
+        /* Modern Shorten Form Panel */
+        .shorten-box { background: var(--card-dark); border: 1px solid #334155; border-radius: 12px; padding: 30px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); margin-bottom: 60px; }
+        .input-group { display: flex; gap: 10px; }
+        .input-group input { flex: 1; padding: 16px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 16px; outline: none; }
+        .input-group input:focus { border-color: var(--primary); }
+        .btn-submit { background: var(--primary); border: none; padding: 0 30px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; color: #000; }
+        .btn-submit:hover { background: var(--primary-hover); color: #fff; }
+
+        /* AUTH SECTIONS (Login / Sign-up Panels) */
+        .auth-card { background: var(--card-dark); max-width: 400px; margin: 60px auto; padding: 40px 30px; border-radius: 12px; border: 1px solid #334155; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); text-align: center; }
+        .auth-card h3 { font-size: 24px; margin-bottom: 20px; }
+        .auth-field { width: 100%; padding: 12px; margin-bottom: 16px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 14px; outline: none; }
+        .auth-card p { font-size: 13px; color: var(--text-muted); margin-top: 15px; cursor: pointer; }
+        .auth-card p span { color: var(--primary); font-weight: 500; }
+
+        /* DASHBOARD LAYOUTS */
+        .dashboard-wrapper { display: flex; gap: 30px; margin-top: 20px; }
+        .sidebar { width: 240px; background: var(--card-dark); border: 1px solid #334155; border-radius: 12px; padding: 20px; height: fit-content; }
+        .sidebar button { width: 100%; text-align: left; background: transparent; border: none; color: var(--text-muted); padding: 12px 16px; border-radius: 6px; font-size: 15px; font-weight: 500; cursor: pointer; margin-bottom: 5px; transition: 0.2s; }
+        .sidebar button.active-tab, .sidebar button:hover { background: rgba(56, 189, 248, 0.1); color: var(--primary); }
+        .main-content { flex: 1; }
+
+        /* Analytics Stats Cards Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: var(--card-dark); border: 1px solid #334155; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2); }
+        .stat-card h4 { font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+        .stat-card p { font-size: 28px; font-weight: 700; color: #fff; }
+        .stat-card span { font-size: 12px; color: var(--success); font-weight: 500; }
+
+        /* Dynamic Table Structures */
+        .table-container { background: var(--card-dark); border: 1px solid #334155; border-radius: 12px; overflow: hidden; margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { background: #131c2e; padding: 16px; font-size: 14px; font-weight: 600; color: var(--text-muted); border-bottom: 1px solid #334155; }
+        td { padding: 16px; font-size: 14px; border-bottom: 1px solid #334155; color: var(--text-main); }
+        tr:last-child td { border-bottom: none; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+        .badge-success { background: rgba(34, 197, 94, 0.15); color: var(--success); }
+        .badge-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+
+        /* GATE / TIMERS AD LOOPS */
+        .ad-container { width: 100%; max-width: 468px; min-height: 60px; display: flex; justify-content: center; align-items: center; margin: 20px auto; }
+        .timer-card { background: var(--card-dark); padding: 40px; border-radius: 16px; border: 1px solid #334155; text-align: center; max-width: 450px; margin: 40px auto; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
+        .timer-val { font-size: 48px; font-weight: 700; color: var(--warning); margin: 20px 0; }
+        .btn-gate { width: 100%; border: none; padding: 16px; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .btn-gate-disabled { background: #334155; color: var(--text-muted); cursor: not-allowed; }
+        .btn-gate-active { background: var(--success); color: #fff; box-shadow: 0 4px 14px rgba(34,197,94,0.4); }
     </style>
 </head>
 <body>
 
-    <div id="gate-ui">
+    <nav>
+        <div class="logo" style="cursor: pointer;" onclick="showView('landing-view')">LG-SHORTENER</div>
+        <div class="nav-links" id="nav-actions">
+            <button onclick="showView('login-view')">Login</button>
+            <button class="btn-cta" onclick="showView('signup-view')">Sign Up</button>
+        </div>
+    </nav>
+
+    <div id="landing-view" class="view-section active-view">
+        <div class="hero">
+            <h1>Shorten URLs. Share Remotely.<br><span>Earn Maximum CPM Revenue.</span></h1>
+            <p>The most advanced dashboard URL manager featuring structural high-payout loop funnels and instant user statistics generation tracking metrics.</p>
+        </div>
+        
+        <div class="shorten-box">
+            <div class="input-group">
+                <input type="url" id="public-shorten-input" placeholder="Paste your long destination web URL address here...">
+                <button class="btn-submit" onclick="processShortenLink()">Shorten Link</button>
+            </div>
+            <div id="shorten-result-container" style="margin-top: 20px; display: none; background: #0f172a; padding: 15px; border-radius: 8px; border: 1px solid #334155; display: flex; justify-content: space-between; align-items: center;">
+                <span id="shortened-url-text" style="color: var(--primary); font-weight: 600;"></span>
+                <button class="btn-cta" style="background:var(--success); color:#fff; border:none; padding:6px 12px; border-radius:4px; font-size:13px; cursor:pointer;" onclick="navigator.clipboard.writeText(document.getElementById('shortened-url-text').innerText); alert('URL Copied!')">Copy</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="login-view" class="view-section">
+        <div class="auth-card">
+            <h3>Account Login</h3>
+            <input type="text" id="login-user" class="auth-field" placeholder="Username or Email">
+            <input type="password" id="login-pass" class="auth-field" placeholder="Password">
+            <button class="btn-submit" style="width: 100%; padding: 12px;" onclick="handleAuthAction('login')">Sign In</button>
+            <p onclick="showView('signup-view')">Don't have an account? <span>Sign Up</span></p>
+        </div>
+    </div>
+
+    <div id="signup-view" class="view-section">
+        <div class="auth-card">
+            <h3>Create Account</h3>
+            <input type="text" id="signup-name" class="auth-field" placeholder="Full Name">
+            <input type="email" id="signup-email" class="auth-field" placeholder="Email Address">
+            <input type="password" id="signup-pass" class="auth-field" placeholder="Password">
+            <button class="btn-submit" style="width: 100%; padding: 12px;" onclick="handleAuthAction('signup')">Register System Account</button>
+            <p onclick="showView('login-view')">Already registered? <span>Sign In</span></p>
+        </div>
+    </div>
+
+    <div id="user-dashboard-view" class="view-section">
+        <div class="dashboard-wrapper">
+            <aside class="sidebar">
+                <button class="active-tab">📊 Dashboard Overview</button>
+                <button onclick="alert('Withdraw functional portal synced securely under current balance state.')">💰 Withdraw Panel</button>
+                <button onclick="showView('admin-dashboard-view')">👑 Switch to Admin View</button>
+                <button onclick="logoutSession()" style="color: var(--danger); margin-top: 40px;">🚪 Session Logout</button>
+            </aside>
+            <main class="main-content">
+                <div class="stats-grid">
+                    <div class="stat-card"><h4>Total Link Views</h4><p id="user-views">2,481</p><span>+12% vs yesterday</span></div>
+                    <div class="stat-card"><h4>Available Earnings</h4><p id="user-balance">$14.88</p><span style="color:var(--primary)">Static Balance Tracker</span></div>
+                    <div class="stat-card"><h4>Average CPM Payout</h4><p>$6.00</p><span>Global Standard Optimized</span></div>
+                </div>
+
+                <h3>Quick Tool: Shorten Link</h3>
+                <div class="shorten-box" style="padding: 20px; margin-top: 15px;">
+                    <div class="input-group">
+                        <input type="url" id="user-shorten-input" placeholder="Paste structural url to monetize...">
+                        <button class="btn-submit" onclick="processShortenLink('user')">Generate</button>
+                    </div>
+                </div>
+
+                <h3>My Active Shortened Links</h3>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Original Long Destination</th><th>Short Link System Alias</th><th>Hits</th><th>Status</th></tr></thead>
+                        <tbody id="user-links-table">
+                            <tr><td>https://mediafire.com/file/download_skin...</td><td><span style="color:var(--primary)">?page=step1</span></td><td>1,102</td><td><span class="badge badge-success">Active</span></td></tr>
+                            <tr><td>https://drive.google.com/uc?id=isagi_bundle...</td><td><span style="color:var(--primary)">?page=step1&id=2</span></td><td>1,379</td><td><span class="badge badge-success">Active</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div id="admin-dashboard-view" class="view-section">
+        <div class="dashboard-wrapper">
+            <aside class="sidebar" style="border-color: var(--danger);">
+                <button class="active-tab" style="color: var(--danger);">🛡️ Central Core System</button>
+                <button onclick="showView('user-dashboard-view')">👤 Switch to User View</button>
+                <button onclick="logoutSession()" style="color: var(--danger); margin-top: 80px;">🚪 Logout</button>
+            </aside>
+            <main class="main-content">
+                <h2 style="margin-bottom: 20px; border-bottom: 2px solid #334155; padding-bottom: 10px;">👑 Global Administrator Terminal Panel</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card" style="border-color: var(--primary);"><h4>Network Accounts</h4><p>1</p><span>Active Developer Profile</span></div>
+                    <div class="stat-card" style="border-color: var(--warning);"><h4>Total Server Traffic</h4><p>42,910</p><span>Combined Loop Iterations</span></div>
+                    <div class="stat-card" style="border-color: var(--success);"><h4>Net Account Payouts</h4><p>$257.46</p><span>Total Adsterra Generated</span></div>
+                </div>
+
+                <h3>Global Traffic Core Configuration Settings</h3>
+                <div class="shorten-box" style="margin-top: 15px; padding: 25px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-muted); display: block; margin-bottom: 8px;">System Global Fixed CPM Rate ($)</label>
+                            <input type="number" class="auth-field" value="6.00" id="admin-cpm">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-muted); display: block; margin-bottom: 8px;">Monetization Loops Verification Timer (Seconds)</label>
+                            <input type="number" class="auth-field" value="15" id="admin-timer">
+                        </div>
+                    </div>
+                    <button class="btn-submit" style="padding: 12px 24px;" onclick="alert('Global Administrator System Rules Variable Cache Saved Successfully.')">Update Core System Configurations</button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div id="gate-view" class="view-section">
         <div class="ad-container">
             <script type="text/javascript">
-                atOptions = {
-                    'key' : '3a1cc8b8b60976b9928135c09296f050',
-                    'format' : 'iframe',
-                    'height' : 250,
-                    'width' : 300,
-                    'params' : {}
-                };
+                atOptions = {'key' : '3a1cc8b8b60976b9928135c09296f050','format' : 'iframe','height' : 250,'width' : 300,'params' : {}};
             </script>
             <script type="text/javascript" src="//rightyrely.com/3a1cc8b8b60976b9928135c09296f050/invoke.js"></script>
         </div>
 
-        <div class="card">
-            <h2 id="step-title">Please Wait...</h2>
-            <p>Your link is generating safely.</p>
+        <div class="timer-card">
+            <h2 id="gate-step-heading">Please Wait (Step 1/4)...</h2>
+            <p style="color: var(--text-muted); margin-top: 8px; font-size: 14px;">Verification sequence is actively rendering ad layouts below.</p>
             
-            <div class="timer" id="countdown">15s</div>
+            <div class="timer-val" id="gate-countdown">15s</div>
+            <div style="margin: 30px 0; font-size: 13px; color: var(--text-muted);">Please engage or scroll down below to unlock destination token link.</div>
 
-            <div class="gap-space">
-                <p>Scroll down to look at the content and unlock the verification button.</p>
-            </div>
-
-            <button id="action-btn" class="btn btn-disabled" disabled>WAITING FOR TIMER...</button>
+            <button id="gate-action-btn" class="btn-gate btn-gate-disabled" disabled>WAITING FOR LAYOUT INITIALIZATION...</button>
         </div>
 
         <div class="ad-container">
             <script type="text/javascript">
-                atOptions = {
-                    'key' : '11d185f9bba335f3e273f689633b0305',
-                    'format' : 'iframe',
-                    'height' : 60,
-                    'width' : 468,
-                    'params' : {}
-                };
+                atOptions = {'key' : '11d185f9bba335f3e273f689633b0305','format' : 'iframe','height' : 60,'width' : 468,'params' : {}};
             </script>
             <script type="text/javascript" src="//rightyrely.com/11d185f9bba335f3e273f689633b0305/invoke.js"></script>
         </div>
     </div>
 
-    <div id="dashboard-ui">
-        <div style="display: flex; min-height: 70vh; background: #ffffff; color: #000000; border-radius: 12px; overflow: hidden;">
-            <aside style="width: 220px; background-color: #1e293b; color: #ffffff; padding: 20px;">
-                <h3 style="color: #38bdf8; margin-bottom: 20px;">LG Dashboard</h3>
-                <p style="margin-bottom: 12px; font-size: 14px;">📊 Active Links</p>
-                <p style="margin-bottom: 12px; font-size: 14px;">💰 Earnings</p>
-            </aside>
-            <main style="flex: 1; padding: 30px; background-color: #f8fafc;">
-                <h2>Welcome to User Dashboard Panel</h2>
-                <p style="color: #64748b; margin-top: 10px;">Loop systems, tracking analytics, and static balance settings are running correctly.</p>
-            </main>
-        </div>
-    </div>
-
     <script>
-        const queryParams = new URLSearchParams(window.location.search);
-        const page = queryParams.get('page');
-        
-        const gateUi = document.getElementById('gate-ui');
-        const dashboardUi = document.getElementById('dashboard-ui');
-
-        if (page === 'dashboard') {
-            dashboardUi.style.display = 'block';
-            document.title = "LG Dashboard";
-        } else {
-            gateUi.style.display = 'block';
-            
-            // Set Step text dynamically based on the current step query
-            let currentStepName = "Step 1/4";
-            if (page === 'step2') currentStepName = "Step 2/4";
-            if (page === 'step3') currentStepName = "Step 3/4";
-            if (page === 'step4') currentStepName = "Step 4/4";
-            document.getElementById('step-title').innerText = "Please Wait (" + currentStepName + ")...";
-
-            let timeLeft = 15;
-            const countdownEl = document.getElementById('countdown');
-            const actionBtn = document.getElementById('action-btn');
-
-            const counter = setInterval(() => {
-                timeLeft--;
-                if (timeLeft <= 0) {
-                    clearInterval(counter);
-                    countdownEl.innerText = "Ready!";
-                    actionBtn.innerText = "CONTINUE";
-                    actionBtn.className = "btn btn-success";
-                    actionBtn.removeAttribute('disabled');
-                } else {
-                    countdownEl.innerText = timeLeft + "s";
-                }
-            }, 1000);
-
-            actionBtn.onclick = () => {
-                // Open Monetized Smart Link in new window
-                window.open("https://rightyrely.com/r0vsyvjxfs?key=327efd631a820b16929f7ea2449fbca7", "_blank");
-                
-                // Redirect loop states without losing current custom host mapping
-                if (page === 'step2') {
-                    window.location.search = "?page=step3";
-                } else if (page === 'step3') {
-                    window.location.search = "?page=step4";
-                } else if (page === 'step4') {
-                    window.location.search = "?page=dashboard";
-                } else {
-                    window.location.search = "?page=step2"; // Default fallback step1 -> step2
-                }
-            };
+        // Single Page View Swapper Core Engine Engine
+        function showView(viewId) {
+            document.querySelectorAll('.view-section').forEach(section => {
+                section.classList.remove('active-view');
+            });
+            const targetSection = document.getElementById(viewId);
+            if(targetSection) targetSection.classList.add('active-view');
+            window.scrollTo(0,0);
         }
+
+        // Mock State Session Engine Controls
+        let currentUser = null;
+        
+        function handleAuthAction(type) {
+            // Setup dynamic session states
+            currentUser = { name: "LG Developer Profile", email: "developer@lg.com" };
+            document.getElementById('nav-actions').innerHTML = `
+                <span style="color:var(--primary); font-size:14px; font-weight:600; margin-right:15px;">👤 ${currentUser.name}</span>
+                <button class="btn-cta" onclick="showView('user-dashboard-view')">My Dashboard</button>
+            `;
+            alert(type === 'login' ? 'Authentication login handshake validated successfully!' : 'User account registry created successfully!');
+            showView('user-dashboard-view');
+        }
+
+        function logoutSession() {
+            currentUser = null;
+            document.getElementById('nav-actions').innerHTML = `
+                <button onclick="showView('login-view')">Login</button>
+                <button class="btn-cta" onclick="showView('signup-view')">Sign Up</button>
+            `;
+            alert('Active framework session tokens purged safely.');
+            showView('landing-view');
+        }
+
+        function processShortenLink(context) {
+            const inputId = context === 'user' ? 'user-shorten-input' : 'public-shorten-input';
+            const inputVal = document.getElementById(inputId).value;
+            if(!inputVal) { alert('Please supply a valid URL source path.'); return; }
+            
+            const currentHost = window.location.origin + window.location.pathname;
+            const simulatedShort = `${currentHost}?page=step1&dest=${btoa(inputVal)}`;
+            
+            if(context === 'user') {
+                const userTable = document.getElementById('user-links-table');
+                userTable.innerHTML = `<tr><td>${inputVal}</td><td><span style="color:var(--primary)">?page=step1&...</span></td><td>0</td><td><span class="badge badge-success">Active</span></td></tr>` + userTable.innerHTML;
+                document.getElementById('user-shorten-input').value = '';
+                alert('Monetized short link generated in data panel array below.');
+            } else {
+                document.getElementById('shortened-url-text').innerText = simulatedShort;
+                document.getElementById('shorten-result-container').style.display = 'flex';
+            }
+        }
+
+        // System Core Run Routing Initialization Engine
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const pageState = urlParams.get('page');
+            const destParam = urlParams.get('dest');
+
+            if (pageState && pageState.startsWith('step')) {
+                // Completely strip global header container items out to prevent manual bypass navigation
+                document.querySelector('nav').style.display = 'none';
+                showView('gate-view');
+                
+                let currentStepNum = parseInt(pageState.replace('step', '')) || 1;
+                document.getElementById('gate-step-heading').innerText = `Please Wait (Step ${currentStepNum}/4)...`;
+
+                let timeRemaining = 15;
+                const countdownDisplay = document.getElementById('gate-countdown');
+                const actionButton = document.getElementById('gate-action-btn');
+
+                const countdownInterval = setInterval(() => {
+                    timeRemaining--;
+                    if(timeRemaining <= 0) {
+                        clearInterval(countdownInterval);
+                        countdownDisplay.innerText = "Ready!";
+                        actionButton.innerText = "CONTINUE TO NEXT PHASE";
+                        actionButton.className = "btn-gate btn-gate-active";
+                        actionButton.removeAttribute('disabled');
+                    } else {
+                        countdownDisplay.innerText = `${timeRemaining}s`;
+                    }
+                }, 1000);
+
+                actionButton.onclick = () => {
+                    // Force Adsterra Revenue Generation Redirection window loop execution
+                    window.open("https://rightyrely.com/r0vsyvjxfs?key=327efd631a820b16929f7ea2449fbca7", "_blank");
+                    
+                    if(currentStepNum < 4) {
+                        window.location.search = `?page=step${currentStepNum + 1}&dest=${destParam || ''}`;
+                    } else {
+                        // Loop final destination fallback redirect extraction safe handler
+                        if(destParam) {
+                            try {
+                                const targetUrl = atob(destParam);
+                                window.location.href = targetUrl;
+                            } catch(e) {
+                                alert("Routing validation complete. Proceeding to main console.");
+                                window.location.search = '';
+                            }
+                        } else {
+                            alert("Verification processing loops complete!");
+                            window.location.search = '';
+                        }
+                    }
+                };
+            }
+        });
     </script>
 </body>
 </html>
