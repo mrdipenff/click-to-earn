@@ -11,9 +11,7 @@ import {
   addDoc, 
   getDocs, 
   query, 
-  where, 
-  doc, 
-  getDoc 
+  where 
 } from 'firebase/firestore';
 
 export default function App() {
@@ -30,7 +28,6 @@ export default function App() {
   const [stats, setStats] = useState({ clicks: 0, earnings: 0.00 });
   const [adminStats, setAdminStats] = useState({ totalUsers: 1, totalClicks: 1490 });
 
-  // Monitor Real Firebase Session Tokens
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
@@ -59,7 +56,7 @@ export default function App() {
       setUserLinks(links);
       setStats({ clicks: totalClicks, earnings: totalClicks * 0.006 });
     } catch (e) {
-      console.log("Seed operational collection update requested.");
+      console.log("Database fetch layout synced.");
     }
   };
 
@@ -68,7 +65,7 @@ export default function App() {
     try {
       if (isSignUp) {
         if (!name) return alert("Name is required!");
-        const res = await createUserWithEmailAndPassword(auth, email, password);
+        await createUserWithEmailAndPassword(auth, email, password);
         alert("Account Created Successfully!");
         setIsSignUp(false);
       } else {
@@ -115,6 +112,16 @@ export default function App() {
   return (
     <div style={{ backgroundColor: '#0b0f19', color: '#f8fafc', minHeight: '100vh', paddingBottom: '80px', fontFamily: 'Inter, sans-serif' }}>
       
+      {/* Absolute Bulletproof CSS Injection */}
+      <style dangerouslySetInnerHTML={{__html: `
+        .mob-input { width: 100%; padding: 14px; background: #0b0f19; border: 1px solid #24334d; border-radius: 10px; color: #fff; font-size: 14px; outline: none; margin-bottom: 12px; display: block; }
+        .mob-input:focus { border-color: #38bdf8; }
+        .mob-btn-primary { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; display: block; background: #38bdf8; color: #000; }
+        .mob-btn-secondary { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; display: block; background: #1e293b; color: #f8fafc; margin-top: 10px; }
+        .nav-tab-btn { flex: 1; background: none; border: none; color: #64748b; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; height: 100%; }
+        .nav-active { color: #38bdf8 !important; border-bottom: 3px solid #38bdf8; }
+      `}} />
+
       {/* Top Mobile Bar */}
       <div style={{ background: '#151f32', padding: '16px', display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #1e293b' }}>
         <span style={{ fontSize: '18px', fontWeight: '700', color: '#38bdf8' }}>LG SHORTENER PRO</span>
@@ -191,7 +198,7 @@ export default function App() {
                 <div key={index} style={{ background: '#0b0f19', padding: '12px', borderRadius: '8px', border: '1px solid #1e293b', marginBottom: '10px' }}>
                   <div style={{ color: '#38bdf8', fontWeight: '600', fontSize: '13px' }}>?go={l.alias}</div>
                   <div style={{ color: '#64748b', fontSize: '11px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{l.originalUrl}</div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginTop: '6px', color: '#22c55e' }}>
+                  <div style={{ display: 'flex', justifySpace: 'between', fontSize: '11px', marginTop: '6px', color: '#22c55e' }}>
                     <span>Hits: {l.clicks || 0}</span>
                     <span>Status: Live Active</span>
                   </div>
@@ -211,7 +218,7 @@ export default function App() {
               {isSignUp && (
                 <input type="text" placeholder="Full Profile Name" className="mob-input" value={name} onChange={(e) => setName(e.target.value)} />
               )}
-              <input type="email" placeholder="Email Address Address" className="mob-input" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <input type="email" placeholder="Email Address" className="mob-input" value={email} onChange={(e) => setEmail(e.target.value)} />
               <input type="password" placeholder="Account Token Password" className="mob-input" value={password} onChange={(e) => setPassword(e.target.value)} />
               
               <button className="mob-btn-primary" onClick={handleAuth}>{isSignUp ? "Register Account" : "Verify Handshake Sign In"}</button>
@@ -221,7 +228,7 @@ export default function App() {
             </div>
           ) : (
             <div style={{ background: '#151f32', padding: '30px 15px', borderRadius: '14px', border: '1px solid #1e293b', textAlign: 'center' }}>
-              <div style={{ width: '70px', height: '70px', background: 'rgba(56,189,248,0.15)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px auto', color: '#38bdf8', fontSize: '24px', fontWeight: 'bold' }}>LG</div>
+              <div style={{ width: '70px', height: '70px', background: 'rgba(56,189,248,0.15)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContext: 'center', margin: '0 auto 14px auto', color: '#38bdf8', fontSize: '24px', fontWeight: 'bold' }}>LG</div>
               <h3>Cloud Network Profile Mapped</h3>
               <p style={{ color: '#64748b', margin: '6px 0 20px 0', fontSize: '13px' }}>{user.email}</p>
               
@@ -264,15 +271,7 @@ export default function App() {
         <button className={`nav-tab-btn ${activeTab === 'profile' ? 'nav-active' : ''}`} onClick={() => setActiveTab('profile')}>Account</button>
       </div>
 
-      {/* CSS Layout Injection Wrapper */}
-      <style jsx global>{`
-        .mob-input { width: 100%; padding: 14px; background: #0b0f19; border: 1px solid #24334d; border-radius: 10px; color: #fff; font-size: 14px; outline: none; margin-bottom: 12px; display: block; }
-        .mob-input:focus { border-color: #38bdf8; }
-        .mob-btn-primary { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; display: block; background: #38bdf8; color: #000; }
-        .mob-btn-secondary { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; display: block; background: #1e293b; color: #f8fafc; margin-top: 10px; }
-        .nav-tab-btn { flex: 1; background: none; border: none; color: #64748b; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; height: 100%; }
-        .nav-active { color: #38bdf8 !important; border-bottom: 3px solid #38bdf8; }
-      `}</style>
     </div>
   );
-}
+                }
+                
