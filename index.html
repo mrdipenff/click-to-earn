@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Please Wait...</title>
+    
+    <script type='text/javascript' src='//rightyrely.com/c6/59/b9/c659b934224b0207bc41a020b55b7b88.js'></script>
+    <script type='text/javascript' src='//rightyrely.com/15/3f/ef/153fef6151b952a9fff8c3f7ad2ea5ea.js'></script>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #0f172a;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .ad-container {
+            width: 100%;
+            max-width: 468px;
+            min-height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .card {
+            background-color: #1e293b;
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            text-align: center;
+            width: 100%;
+            max-width: 450px;
+        }
+        h2 { font-size: 24px; margin-bottom: 10px; color: #38bdf8; }
+        p { font-size: 14px; color: #94a3b8; margin-bottom: 20px; }
+        .timer { font-size: 48px; font-weight: bold; color: #f59e0b; margin: 20px 0; }
+        .gap-space { margin: 40px 0; font-size: 12px; color: #64748b; }
+        .btn {
+            width: 100%;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-success {
+            background-color: #22c55e;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(34,197,94,0.4);
+        }
+        .btn-disabled {
+            background-color: #334155;
+            color: #64748b;
+            cursor: not-allowed;
+        }
+        #gate-ui { display: none; }
+        #dashboard-ui { display: none; width: 100%; max-width: 1000px; margin: 0 auto; }
+    </style>
+</head>
+<body>
+
+    <div id="gate-ui">
+        <div class="ad-container">
+            <script type="text/javascript">
+                atOptions = {
+                    'key' : '3a1cc8b8b60976b9928135c09296f050',
+                    'format' : 'iframe',
+                    'height' : 250,
+                    'width' : 300,
+                    'params' : {}
+                };
+            </script>
+            <script type="text/javascript" src="//rightyrely.com/3a1cc8b8b60976b9928135c09296f050/invoke.js"></script>
+        </div>
+
+        <div class="card">
+            <h2 id="step-title">Please Wait...</h2>
+            <p>Your link is generating safely.</p>
+            
+            <div class="timer" id="countdown">15s</div>
+
+            <div class="gap-space">
+                <p>Scroll down to look at the content and unlock the verification button.</p>
+            </div>
+
+            <button id="action-btn" class="btn btn-disabled" disabled>WAITING FOR TIMER...</button>
+        </div>
+
+        <div class="ad-container">
+            <script type="text/javascript">
+                atOptions = {
+                    'key' : '11d185f9bba335f3e273f689633b0305',
+                    'format' : 'iframe',
+                    'height' : 60,
+                    'width' : 468,
+                    'params' : {}
+                };
+            </script>
+            <script type="text/javascript" src="//rightyrely.com/11d185f9bba335f3e273f689633b0305/invoke.js"></script>
+        </div>
+    </div>
+
+    <div id="dashboard-ui">
+        <div style="display: flex; min-height: 70vh; background: #ffffff; color: #000000; border-radius: 12px; overflow: hidden;">
+            <aside style="width: 220px; background-color: #1e293b; color: #ffffff; padding: 20px;">
+                <h3 style="color: #38bdf8; margin-bottom: 20px;">LG Dashboard</h3>
+                <p style="margin-bottom: 12px; font-size: 14px;">📊 Active Links</p>
+                <p style="margin-bottom: 12px; font-size: 14px;">💰 Earnings</p>
+            </aside>
+            <main style="flex: 1; padding: 30px; background-color: #f8fafc;">
+                <h2>Welcome to User Dashboard Panel</h2>
+                <p style="color: #64748b; margin-top: 10px;">Loop systems, tracking analytics, and static balance settings are running correctly.</p>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        const queryParams = new URLSearchParams(window.location.search);
+        const page = queryParams.get('page');
+        
+        const gateUi = document.getElementById('gate-ui');
+        const dashboardUi = document.getElementById('dashboard-ui');
+
+        if (page === 'dashboard') {
+            dashboardUi.style.display = 'block';
+            document.title = "LG Dashboard";
+        } else {
+            gateUi.style.display = 'block';
+            
+            // Set Step text dynamically based on the current step query
+            let currentStepName = "Step 1/4";
+            if (page === 'step2') currentStepName = "Step 2/4";
+            if (page === 'step3') currentStepName = "Step 3/4";
+            if (page === 'step4') currentStepName = "Step 4/4";
+            document.getElementById('step-title').innerText = "Please Wait (" + currentStepName + ")...";
+
+            let timeLeft = 15;
+            const countdownEl = document.getElementById('countdown');
+            const actionBtn = document.getElementById('action-btn');
+
+            const counter = setInterval(() => {
+                timeLeft--;
+                if (timeLeft <= 0) {
+                    clearInterval(counter);
+                    countdownEl.innerText = "Ready!";
+                    actionBtn.innerText = "CONTINUE";
+                    actionBtn.className = "btn btn-success";
+                    actionBtn.removeAttribute('disabled');
+                } else {
+                    countdownEl.innerText = timeLeft + "s";
+                }
+            }, 1000);
+
+            actionBtn.onclick = () => {
+                // Open Monetized Smart Link in new window
+                window.open("https://rightyrely.com/r0vsyvjxfs?key=327efd631a820b16929f7ea2449fbca7", "_blank");
+                
+                // Redirect loop states without losing current custom host mapping
+                if (page === 'step2') {
+                    window.location.search = "?page=step3";
+                } else if (page === 'step3') {
+                    window.location.search = "?page=step4";
+                } else if (page === 'step4') {
+                    window.location.search = "?page=dashboard";
+                } else {
+                    window.location.search = "?page=step2"; // Default fallback step1 -> step2
+                }
+            };
+        }
+    </script>
+</body>
+</html>
