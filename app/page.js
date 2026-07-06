@@ -1,5 +1,6 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { auth, db } from '../firebase';
 import { 
   signInWithEmailAndPassword, 
@@ -12,10 +13,13 @@ import {
   addDoc, 
   getDocs, 
   query, 
-  where 
+  where,
+  updateDoc,
+  doc
 } from 'firebase/firestore';
 
-export default function App() {
+function ShortenerAppContent() {
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState('home');
   const [user, setUser] = useState(null);
   const [email, setEmail] = useState('');
@@ -28,7 +32,44 @@ export default function App() {
   const [userLinks, setUserLinks] = useState([]);
   const [stats, setStats] = useState({ clicks: 0, earnings: 0.00 });
   const [adminStats, setAdminStats] = useState({ totalUsers: 1, totalClicks: 1490 });
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
+  // 🚀 Real-Time Transparent Redirection Loop Engine
+  useEffect(() => {
+    const handleRedirect = async () => {
+      const goParam = searchParams.get('go');
+      const destParam = searchParams.get('dest');
+      
+      if (goParam && destParam) {
+        setIsRedirecting(true);
+        try {
+          const decodedUrl = atob(destParam);
+          
+          // Firestore mein check karke hits/clicks auto-increment loop chalana
+          const q = query(collection(db, "links"), where("alias", "==", goParam));
+          const querySnapshot = await getDocs(q);
+          
+          if (!querySnapshot.empty) {
+            const linkDoc = querySnapshot.docs[0];
+            const currentClicks = linkDoc.data().clicks || 0;
+            
+            await updateDoc(doc(db, "links", linkDoc.id), {
+              clicks: currentClicks + 1
+            });
+          }
+          
+          // Real destination window forward route
+          window.location.href = decodedUrl;
+        } catch (err) {
+          console.error("Redirection failure:", err);
+          setIsRedirecting(false);
+        }
+      }
+    };
+    handleRedirect();
+  }, [searchParams]);
+
+  // Sync Auth User Tokens
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
@@ -51,13 +92,13 @@ export default function App() {
       let totalClicks = 0;
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        links.push(data);
+        links.push({ id: doc.id, ...data });
         totalClicks += (data.clicks || 0);
       });
       setUserLinks(links);
       setStats({ clicks: totalClicks, earnings: totalClicks * 0.006 });
     } catch (e) {
-      console.log("Firestore sync ready.");
+      console.log("Firestore matrix sync ready.");
     }
   };
 
@@ -71,7 +112,7 @@ export default function App() {
         setIsSignUp(false);
       } else {
         await signInWithEmailAndPassword(auth, email, password);
-        alert("Welcome Back!");
+        alert("Session Handshake Authorized!");
         setActiveTab('dash');
       }
     } catch (err) {
@@ -101,114 +142,124 @@ export default function App() {
         });
         setLongUrl('');
         fetchUserData(user);
-        alert("Monetized link generated!");
+        alert("Monetized link appended successfully!");
       } catch (e) {
-        alert("Database error.");
+        alert("Error mapping transaction database.");
       }
     } else {
       setGeneratedLink(shortUrl);
     }
   };
 
+  if (isRedirecting) {
+    return (
+      <div style={{ backgroundColor: '#090d16', color: '#fff', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontFamily: 'sans-serif' }}>
+        <div className="spinner"></div>
+        <h3 style={{ marginTop: '20px', letterSpacing: '0.5px', fontWeight: '400', color: '#94a3b8' }}>Bypassing cloud layers...</h3>
+        <p style={{ fontSize: '12px', color: '#64748b', marginTop: '5px' }}>Please wait, forwarding safely</p>
+        <style dangerouslySetInnerHTML={{__html: `
+          .spinner { width: 40px; height: 40px; border: 3px solid rgba(56, 189, 248, 0.1); border-radius: 50%; border-top-color: #38bdf8; animation: spin 0.8s linear infinite; }
+          @keyframes spin { to { transform: rotate(360deg); } }
+        `}} />
+      </div>
+    );
+  }
+
   return (
-    <div style={{ backgroundColor: '#030712', color: '#f3f4f6', minHeight: '100vh', paddingBottom: '90px', fontFamily: '"Poppins", system-ui, sans-serif', overflowX: 'hidden' }}>
+    <div style={{ backgroundColor: '#090d16', color: '#f1f5f9', minHeight: '100vh', paddingBottom: '90px', fontFamily: '"Inter", system-ui, sans-serif', overflowX: 'hidden' }}>
       
-      {/* Dynamic CSS Styling for Premium UI */}
+      {/* Premium Professional Fluid Framework Architecture UI CSS */}
       <style dangerouslySetInnerHTML={{__html: `
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
-        .glass-card { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
-        .neon-input { width: 100%; padding: 16px; background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: #fff; font-size: 14px; transition: all 0.3s ease; outline: none; margin-bottom: 14px; box-sizing: border-box; }
-        .neon-input:focus { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.4); background: rgba(31, 41, 55, 0.8); }
-        .btn-gradient { width: 100%; padding: 16px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; text-align: center; color: #fff; background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%); box-shadow: 0 4px 20px rgba(6, 182, 212, 0.3); transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .btn-gradient:active { transform: scale(0.98); }
-        .btn-secondary { width: 100%; padding: 16px; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; font-size: 14px; font-weight: 500; cursor: pointer; background: transparent; color: #9ca3af; transition: all 0.3s ease; margin-top: 12px; }
-        .btn-secondary:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
-        .nav-btn { flex: 1; background: none; border: none; color: #6b7280; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.3s ease; }
-        .nav-btn-active { color: #06b6d4 !important; text-shadow: 0 0 10px rgba(6, 182, 212, 0.5); }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        .saas-card { background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 16px; }
+        .saas-input { width: 100%; padding: 14px 16px; background: #030712; border: 1px solid #374151; border-radius: 8px; color: #fff; font-size: 14px; outline: none; margin-bottom: 12px; box-sizing: border-box; transition: border-color 0.2s; }
+        .saas-input:focus { border-color: #38bdf8; }
+        .saas-btn { width: 100%; padding: 14px; background: #38bdf8; color: #000; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+        .saas-btn:active { opacity: 0.9; }
+        .saas-btn-sec { width: 100%; padding: 14px; background: #1f2937; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 10px; }
+        .tab-bar-item { flex: 1; background: none; border: none; color: #94a3b8; font-size: 12px; font-weight: 500; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .tab-active { color: #38bdf8 !important; font-weight: 600; }
       `}} />
 
-      {/* Top Header Navigation */}
-      <div style={{ background: 'rgba(17, 24, 39, 0.8)', backdropFilter: 'blur(8px)', padding: '18px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', sticky: 'top', zIndex: 1000 }}>
-        <span style={{ fontSize: '20px', fontWeight: '700', background: 'linear-gradient(to right, #06b6d4, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '0.5px' }}>LG SHORTENER PRO</span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10b981', display: 'inline-block', boxShadow: '0 0 8px #10b981' }}></span>
-          <span style={{ color: '#10b981', fontSize: '12px', fontWeight: '600' }}>Live</span>
-        </div>
+      {/* Corporate Modern Top Bar */}
+      <div style={{ background: '#111827', padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #1f2937' }}>
+        <span style={{ fontSize: '18px', fontWeight: '700', color: '#38bdf8', letterSpacing: '-0.5px' }}>LG SHORTENER PRO</span>
+        <span style={{ background: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8', padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: '600' }}>Cloud Node Active</span>
       </div>
 
-      {/* ================= VIEW 1: PREMIUM HOME ================= */}
+      {/* ================= VIEW 1: PROFESSIONAL CLEAN HOME ================= */}
       {activeTab === 'home' && (
-        <div style={{ padding: '30px 20px' }}>
-          <div style={{ textAlign: 'center', margin: '40px 0 35px 0' }}>
-            <h2 style={{ fontSize: '32px', fontWeight: '700', lineHeight: '1.2', letterSpacing: '-0.5px', background: 'linear-gradient(to bottom, #ffffff 60%, #9ca3af)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Shorten Links,<br/>Earn Smart Cash</h2>
-            <p style={{ color: '#9ca3af', fontSize: '14px', marginTop: '10px', fontWeight: '300' }}>Highest CPM payouts with advanced analytics tracking.</p>
+        <div style={{ padding: '24px 16px' }}>
+          <div style={{ textAlign: 'center', margin: '30px 0 25px 0' }}>
+            <h2 style={{ fontSize: '28px', fontWeight: '700', letterSpacing: '-0.5px', color: '#fff' }}>Shorten Links, Earn Payouts</h2>
+            <p style={{ color: '#94a3b8', fontSize: '14px', marginTop: '6px', fontWeight: '400' }}>High CPM optimization network engine console.</p>
           </div>
 
-          <div className="glass-card" style={{ padding: '24px' }}>
-            <h4 style={{ margin: '0 0 16px 0', fontSize: '16px', fontWeight: '600', color: '#e5e7eb', display: 'flex', alignItems: 'center', gap: '8px' }}>🔗 Instant Shortener</h4>
+          <div className="saas-card">
+            <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#e2e8f0', fontWeight: '600' }}>🔗 Paste Link Workspace</h4>
             <input 
               type="url" 
-              className="neon-input"
-              placeholder="Enter your long URL here..." 
+              className="saas-input"
+              placeholder="Enter valid destination target link..." 
               value={longUrl}
               onChange={(e) => setLongUrl(e.target.value)}
             />
-            <button className="btn-gradient" onClick={() => handleShorten('home')}>Shorten Link</button>
+            <button className="saas-btn" onClick={() => handleShorten('home')}>Shorten URL</button>
 
             {generatedLink && (
-              <div style={{ marginTop: '18px', background: 'rgba(3, 7, 18, 0.6)', padding: '14px', borderRadius: '12px', border: '1px solid rgba(6, 182, 212, 0.2)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ color: '#06b6d4', fontSize: '13px', wordBreak: 'break-all', fontWeight: '600', paddingRight: '10px' }}>{generatedLink}</span>
-                <button onClick={() => { navigator.clipboard.writeText(generatedLink); alert("Copied to clipboard!"); }} style={{ background: '#06b6d4', border: 'none', color: '#000', padding: '8px 16px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', boxShadow: '0 2px 10px rgba(6, 182, 212, 0.3)' }}>Copy</button>
+              <div style={{ marginTop: '16px', background: '#030712', padding: '12px', borderRadius: '8px', border: '1px solid #1f2937', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: '#38bdf8', fontSize: '13px', wordBreak: 'break-all', fontWeight: '500' }}>{generatedLink}</span>
+                <button onClick={() => { navigator.clipboard.writeText(generatedLink); alert("Copied!"); }} style={{ background: '#38bdf8', border: 'none', color: '#000', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>Copy</button>
               </div>
             )}
           </div>
 
-          <div className="glass-card" style={{ padding: '24px', textAlign: 'center', marginTop: '20px' }}>
-            <h4 style={{ margin: '0 0 6px 0', fontSize: '16px' }}>Ready to Maximize Earnings?</h4>
-            <p style={{ color: '#9ca3af', fontSize: '13px', margin: '0 0 20px 0' }}>Create an account to track detailed clicks, custom alias logs and secure withdrawals.</p>
-            <button className="btn-secondary" onClick={() => setActiveTab('profile')}>Sign In / Register App</button>
+          <div className="saas-card" style={{ textAlign: 'center', marginTop: '12px' }}>
+            <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: '600' }}>Maximize Your Traffic Payouts</h4>
+            <p style={{ color: '#94a3b8', fontSize: '12px', margin: '0 0 14px 0' }}>Create a static member cloud profile to unlock advanced dashboards.</p>
+            <button className="saas-btn-sec" onClick={() => setActiveTab('profile')}>Sign In / Register Portal</button>
           </div>
         </div>
       )}
 
-      {/* ================= VIEW 2: PREMIUM DASHBOARD ================= */}
+      {/* ================= VIEW 2: EXECUTIVE DASHBOARD CONSOLE ================= */}
       {activeTab === 'dash' && (
-        <div style={{ padding: '25px 20px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '20px' }}>
-            <div className="glass-card" style={{ padding: '18px' }}>
-              <span style={{ fontSize: '12px', color: '#9ca3af', fontWeight: '500' }}>Total Clicks</span>
-              <p style={{ fontSize: '28px', fontWeight: '700', margin: '6px 0 0 0', color: '#fff' }}>{stats.clicks}</p>
+        <div style={{ padding: '20px 16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+            <div className="saas-card" style={{ padding: '16px' }}>
+              <span style={{ fontSize: '11px', color: '#94a3b8', textTransform: 'uppercase', fontWeight: '600' }}>Hits / Traffic</span>
+              <p style={{ fontSize: '26px', fontWeight: '700', margin: '4px 0 0 0', color: '#fff' }}>{stats.clicks}</p>
             </div>
-            <div className="glass-card" style={{ padding: '18px' }}>
-              <span style={{ fontSize: '12px', color: '#9ca3af', fontWeight: '500' }}>Available Payout</span>
-              <p style={{ fontSize: '28px', fontWeight: '700', margin: '6px 0 0 0', color: '#10b981' }}>${stats.earnings.toFixed(2)}</p>
+            <div className="saas-card" style={{ padding: '16px' }}>
+              <span style={{ fontSize: '11px', color: '#94a3b8', textTransform: 'uppercase', fontWeight: '600' }}>Total Earnings</span>
+              <p style={{ fontSize: '26px', fontWeight: '700', margin: '4px 0 0 0', color: '#10b981' }}>${stats.earnings.toFixed(2)}</p>
             </div>
           </div>
 
-          <div className="glass-card" style={{ padding: '24px', marginBottom: '20px' }}>
-            <h4 style={{ margin: '0 0 14px 0', fontSize: '16px' }}>⚡ Premium Monetize Workspace</h4>
+          <div className="saas-card">
+            <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600' }}>⚡ Generate Monetized Node</h4>
             <input 
               type="url" 
-              className="neon-input"
-              placeholder="Paste destination link address..." 
+              className="saas-input"
+              placeholder="Paste long link target target path..." 
               value={longUrl}
               onChange={(e) => setLongUrl(e.target.value)}
             />
-            <button className="btn-gradient" onClick={() => handleShorten('dash')}>Generate Short Loop Link</button>
+            <button className="saas-btn" onClick={() => handleShorten('dash')}>Shorten Link Address</button>
           </div>
 
-          <div className="glass-card" style={{ padding: '24px' }}>
-            <h4 style={{ margin: '0 0 16px 0', fontSize: '16px' }}>📁 Active Managed Links</h4>
+          <div className="saas-card">
+            <h4 style={{ margin: '0 0 14px 0', fontSize: '14px', fontWeight: '600' }}>📁 Managed Active Cloud Indexes</h4>
             {userLinks.length === 0 ? (
-              <p style={{ color: '#6b7280', fontSize: '13px', textAlign: 'center', padding: '20px 0' }}>No active cloud nodes generated yet.</p>
+              <p style={{ color: '#64748b', fontSize: '12px', textAlign: 'center', padding: '10px 0' }}>No mapped arrays tracked in database ecosystem.</p>
             ) : (
               userLinks.map((l, index) => (
-                <div key={index} style={{ background: 'rgba(3, 7, 18, 0.4)', padding: '14px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.03)', marginBottom: '12px' }}>
-                  <div style={{ color: '#06b6d4', fontWeight: '600', fontSize: '14px', marginBottom: '4px' }}>?go={l.alias}</div>
-                  <div style={{ color: '#6b7280', fontSize: '12px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{l.originalUrl}</div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', marginTop: '10px', paddingTop: '8px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                    <span style={{ color: '#e5e7eb' }}>Clicks: <strong style={{ color: '#3b82f6' }}>{l.clicks || 0}</strong></span>
-                    <span style={{ color: '#10b981', background: 'rgba(16, 185, 129, 0.1)', padding: '2px 8px', borderRadius: '6px', fontSize: '11px' }}>Active</span>
+                <div key={index} style={{ background: '#030712', padding: '12px', borderRadius: '8px', border: '1px solid #1f2937', marginBottom: '10px' }}>
+                  <div style={{ color: '#38bdf8', fontWeight: '600', fontSize: '13px' }}>?go={l.alias}</div>
+                  <div style={{ color: '#64748b', fontSize: '11px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '2px' }}>{l.originalUrl}</div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginTop: '8px', paddingTop: '6px', borderTop: '1px solid #1f2937' }}>
+                    <span style={{ color: '#94a3b8' }}>Clicks: <strong style={{ color: '#38bdf8' }}>{l.clicks || 0}</strong></span>
+                    <span style={{ color: '#10b981', fontWeight: '600' }}>Live</span>
                   </div>
                 </div>
               ))
@@ -217,80 +268,92 @@ export default function App() {
         </div>
       )}
 
-      {/* ================= VIEW 3: PREMIUM AUTH PORTAL ================= */}
+      {/* ================= VIEW 3: CLEAN SECURE USER AUTH ================= */}
       {activeTab === 'profile' && (
-        <div style={{ padding: '30px 20px' }}>
+        <div style={{ padding: '24px 16px' }}>
           {!user ? (
-            <div className="glass-card" style={{ padding: '26px' }}>
-              <h3 style={{ margin: '0 0 8px 0', fontSize: '22px', fontWeight: '700', textAlign: 'center' }}>{isSignUp ? "Create Account" : "Secure Gate Login"}</h3>
-              <p style={{ color: '#9ca3af', fontSize: '13px', textAlign: 'center', marginBottom: '24px' }}>{isSignUp ? "Join the network matrix node" : "Verify account authorization credentials"}</p>
+            <div className="saas-card">
+              <h3 style={{ margin: '0 0 4px 0', fontSize: '20px', fontWeight: '700', textAlign: 'center' }}>{isSignUp ? "Register Account" : "Identity Gateway Verification"}</h3>
+              <p style={{ color: '#94a3b8', fontSize: '12px', textAlign: 'center', marginBottom: '20px' }}>{isSignUp ? "Create a cloud database space node" : "Input verified terminal credentials"}</p>
               
               {isSignUp && (
-                <input type="text" placeholder="Full Username" className="neon-input" value={name} onChange={(e) => setName(e.target.value)} />
+                <input type="text" placeholder="Your Name" className="saas-input" value={name} onChange={(e) => setName(e.target.value)} />
               )}
-              <input type="email" placeholder="Email Address" className="neon-input" value={email} onChange={(e) => setEmail(e.target.value)} />
-              <input type="password" placeholder="Account Key Password" className="neon-input" value={password} onChange={(e) => setPassword(e.target.value)} />
+              <input type="email" placeholder="Email Address" className="saas-input" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <input type="password" placeholder="Account Access Token" className="saas-input" value={password} onChange={(e) => setPassword(e.target.value)} />
               
-              <button className="btn-gradient" style={{ marginTop: '10px' }} onClick={handleAuth}>{isSignUp ? "Register Master Account" : "Authorize Session Login"}</button>
-              <button className="btn-secondary" onClick={() => setIsSignUp(!isSignUp)}>
-                {isSignUp ? "Already a member? Sign In" : "Don't have an account? Register Profile"}
+              <button className="saas-btn" style={{ marginTop: '6px' }} onClick={handleAuth}>{isSignUp ? "Confirm Dynamic Registration" : "Authenticate Session Gateway"}</button>
+              <button className="saas-btn-sec" onClick={() => setIsSignUp(!isSignUp)}>
+                {isSignUp ? "Already member? Sign In" : "Need user entry registration profile?"}
               </button>
             </div>
           ) : (
-            <div className="glass-card" style={{ padding: '40px 20px', textAlign: 'center' }}>
-              <div style={{ width: '80px', height: '80px', background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%)', border: '1px solid rgba(6, 182, 212, 0.4)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px auto', color: '#06b6d4', fontSize: '28px', fontWeight: '700', boxShadow: '0 0 20px rgba(6, 182, 212, 0.2)' }}>LG</div>
-              <h3 style={{ margin: '0 0 6px 0', fontSize: '20px' }}>Authorized Device Node</h3>
-              <p style={{ color: '#6b7280', margin: '0 0 30px 0', fontSize: '14px' }}>{user.email}</p>
+            <div className="saas-card" style={{ textAlign: 'center', padding: '30px 16px' }}>
+              <div style={{ width: '60px', height: '60px', background: 'rgba(56, 189, 248, 0.1)', border: '1px solid rgba(56, 189, 248, 0.3)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto', color: '#38bdf8', fontSize: '22px', fontWeight: '700' }}>LG</div>
+              <h3 style={{ margin: '0 0 4px 0', fontSize: '18px' }}>Ecosystem Terminal Mapped</h3>
+              <p style={{ color: '#64748b', margin: '0 0 24px 0', fontSize: '13px' }}>{user.email}</p>
               
               {user.email === 'admin@lg.com' && (
-                <button className="btn-gradient" style={{ marginBottom: '12px' }} onClick={() => setActiveTab('admin')}>Launch Admin Terminal</button>
+                <button className="saas-btn" style={{ marginBottom: '10px' }} onClick={() => setActiveTab('admin')}>Launch Master Admin Node</button>
               )}
-              <button className="btn-secondary" style={{ border: '1px solid rgba(239, 68, 68, 0.3)', color: '#ef4444' }} onClick={handleLogout}>Terminate Secure Session</button>
+              <button className="saas-btn-sec" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }} onClick={handleLogout}>Kill Session Identity</button>
             </div>
           )}
         </div>
       )}
 
-      {/* ================= VIEW 4: MASTER CENTRAL ADMIN ================= */}
+      {/* ================= VIEW 4: SYSTEM MASTER ADMIN CORE ================= */}
       {activeTab === 'admin' && (
-        <div style={{ padding: '25px 20px' }}>
-          <h3 style={{ color: '#ef4444', margin: '0 0 20px 0', fontSize: '22px', fontWeight: '700' }}>🛡️ Central Core System Admin</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '20px' }}>
-            <div className="glass-card" style={{ padding: '18px' }}>
-              <span style={{ fontSize: '12px', color: '#9ca3af' }}>Network Profiles</span>
-              <p style={{ fontSize: '26px', fontWeight: '700', margin: '4px 0 0 0' }}>{adminStats.totalUsers}</p>
+        <div style={{ padding: '20px 16px' }}>
+          <h3 style={{ color: '#ef4444', margin: '0 0 16px 0', fontSize: '20px', fontWeight: '700' }}>🛡️ Central Core System Admin</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+            <div className="saas-card" style={{ padding: '16px' }}>
+              <span style={{ fontSize: '11px', color: '#94a3b8' }}>Network Accounts</span>
+              <p style={{ fontSize: '24px', fontWeight: '700', margin: '4px 0 0 0' }}>{adminStats.totalUsers}</p>
             </div>
-            <div className="glass-card" style={{ padding: '18px' }}>
-              <span style={{ fontSize: '12px', color: '#9ca3af' }}>Cumulative Traffic</span>
-              <p style={{ fontSize: '26px', fontWeight: '700', margin: '4px 0 0 0', color: '#3b82f6' }}>{adminStats.totalClicks}</p>
+            <div className="saas-card" style={{ padding: '16px' }}>
+              <span style={{ fontSize: '11px', color: '#94a3b8' }}>Cumulative Traffic</span>
+              <p style={{ fontSize: '24px', fontWeight: '700', margin: '4px 0 0 0', color: '#38bdf8' }}>{adminStats.totalClicks}</p>
             </div>
           </div>
-          <div className="glass-card" style={{ padding: '24px' }}>
-            <h4 style={{ margin: '0 0 16px 0' }}>⚙️ Global Runtime Configurations</h4>
-            <label style={{ fontSize: '12px', color: '#9ca3af', display: 'block', marginBottom: '6px' }}>Fixed Baseline CPM Rate ($)</label>
-            <input type="number" className="neon-input" defaultValue="6.00" />
-            <button className="btn-gradient" style={{ background: 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)', boxShadow: '0 4px 20px rgba(239, 68, 68, 0.2)' }} onClick={() => alert("Global configuration synchronized successfully.")}>Sync Configuration Rules</button>
+          <div className="saas-card">
+            <h4 style={{ margin: '0 0 12px 0' }}>⚙️ Global Runtime Configurations</h4>
+            <label style={{ fontSize: '12px', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>Fixed Baseline CPM Rate ($)</label>
+            <input type="number" className="saas-input" defaultValue="6.00" />
+            <button className="saas-btn" style={{ background: '#ef4444', color: '#fff' }} onClick={() => alert("Global structural baseline constraints synchronized.")}>Sync Parameter Rules</button>
           </div>
         </div>
       )}
 
-      {/* Global Bottom Sticky Glass Bar */}
-      <div style={{ background: 'rgba(17, 24, 39, 0.75)', backdropFilter: 'blur(20px)', position: 'fixed', bottom: 0, left: 0, right: 0, height: '70px', display: 'flex', borderTop: '1px solid rgba(255, 255, 255, 0.06)', zIndex: 99999 }}>
-        <button className={`nav-btn ${activeTab === 'home' ? 'nav-btn-active' : ''}`} onClick={() => setActiveTab('home')}>
-          <span style={{ fontSize: '18px', marginBottom: '2px' }}>🏠</span>
+      {/* Flat Executive Sticky Bottom Bar */}
+      <div style={{ background: '#111827', position: 'fixed', bottom: 0, left: 0, right: 0, height: '65px', display: 'flex', borderTop: '1px solid #1f2937', zIndex: 99999 }}>
+        <button className={`tab-bar-item ${activeTab === 'home' ? 'tab-active' : ''}`} onClick={() => setActiveTab('home')}>
+          <span style={{ fontSize: '16px', marginBottom: '2px' }}>🏠</span>
           <span>Home</span>
         </button>
-        <button className={`nav-btn ${activeTab === 'dash' ? 'nav-btn-active' : ''}`} onClick={() => setActiveTab('dash')}>
-          <span style={{ fontSize: '18px', marginBottom: '2px' }}>⚡</span>
+        <button className={`tab-bar-item ${activeTab === 'dash' ? 'tab-active' : ''}`} onClick={() => setActiveTab('dash')}>
+          <span style={{ fontSize: '16px', marginBottom: '2px' }}>📊</span>
           <span>Console</span>
         </button>
-        <button className={`nav-btn ${activeTab === 'profile' ? 'nav-btn-active' : ''}`} onClick={() => setActiveTab('profile')}>
-          <span style={{ fontSize: '18px', marginBottom: '2px' }}>👤</span>
+        <button className={`tab-bar-item ${activeTab === 'profile' ? 'tab-active' : ''}`} onClick={() => setActiveTab('profile')}>
+          <span style={{ fontSize: '16px', marginBottom: '2px' }}>👤</span>
           <span>Account</span>
         </button>
       </div>
 
     </div>
   );
-        }
+}
+
+export default function App() {
+  return (
+    <Suspense fallback={
+      <div style={{ backgroundColor: '#090d16', color: '#fff', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        Loading engine components...
+      </div>
+    }>
+      <ShortenerAppContent />
+    </Suspense>
+  );
+    }
         
