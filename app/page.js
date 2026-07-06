@@ -29,6 +29,7 @@ export default function App() {
   const [stats, setStats] = useState({ clicks: 0, earnings: 0.00 });
   const [adminStats, setAdminStats] = useState({ totalUsers: 1, totalClicks: 1490 });
 
+  // Monitor Auth Session
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
@@ -57,7 +58,7 @@ export default function App() {
       setUserLinks(links);
       setStats({ clicks: totalClicks, earnings: totalClicks * 0.006 });
     } catch (e) {
-      console.log("Database sync ready.");
+      console.log("Firestore collection initialized.");
     }
   };
 
@@ -101,9 +102,9 @@ export default function App() {
         });
         setLongUrl('');
         fetchUserData(user);
-        alert("Monetized link saved!");
+        alert("Monetized link saved to Firestore!");
       } catch (e) {
-        alert("Error saving mapping.");
+        alert("Database transaction error.");
       }
     } else {
       setGeneratedLink(shortUrl);
@@ -113,6 +114,7 @@ export default function App() {
   return (
     <div style={{ backgroundColor: '#0b0f19', color: '#f8fafc', minHeight: '100vh', paddingBottom: '80px', fontFamily: 'Inter, sans-serif' }}>
       
+      {/* Pure CSS Injection for Webkit Responsive Fluidity */}
       <style dangerouslySetInnerHTML={{__html: `
         .mob-input { width: 100%; padding: 14px; background: #0b0f19; border: 1px solid #24334d; border-radius: 10px; color: #fff; font-size: 14px; outline: none; margin-bottom: 12px; display: block; }
         .mob-input:focus { border-color: #38bdf8; }
@@ -122,11 +124,13 @@ export default function App() {
         .nav-active { color: #38bdf8 !important; border-bottom: 3px solid #38bdf8; }
       `}} />
 
+      {/* App Bar Bar */}
       <div style={{ background: '#151f32', padding: '16px', display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #1e293b' }}>
         <span style={{ fontSize: '18px', fontWeight: '700', color: '#38bdf8' }}>LG SHORTENER PRO</span>
-        <span style={{ background: 'rgba(34,197,94,0.1)', color: '#22c55e', padding: '4px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: '600' }}>Cloud Database Active</span>
+        <span style={{ background: 'rgba(34,197,94,0.1)', color: '#22c55e', padding: '4px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: '600' }}>Cloud Active</span>
       </div>
 
+      {/* ================= TAB 1: HOME PANEL ================= */}
       {activeTab === 'home' && (
         <div style={{ padding: '20px 16px' }}>
           <div style={{ textAlign: 'center', margin: '30px 0' }}>
@@ -161,6 +165,7 @@ export default function App() {
         </div>
       )}
 
+      {/* ================= TAB 2: USER CONSOLE ================= */}
       {activeTab === 'dash' && (
         <div style={{ padding: '20px 16px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
@@ -206,6 +211,7 @@ export default function App() {
         </div>
       )}
 
+      {/* ================= TAB 3: AUTH SECTIONS ================= */}
       {activeTab === 'profile' && (
         <div style={{ padding: '20px 16px' }}>
           {!user ? (
@@ -219,7 +225,7 @@ export default function App() {
               
               <button className="mob-btn-primary" onClick={handleAuth}>{isSignUp ? "Register Account" : "Verify Handshake Sign In"}</button>
               <button className="mob-btn-secondary" onClick={() => setIsSignUp(!isSignUp)}>
-                {isSignUp ? "Create dynamic cloud profile account" : "Sign In"}
+                {isSignUp ? "Already registered? Sign In" : "Create dynamic cloud profile account"}
               </button>
             </div>
           ) : (
@@ -237,6 +243,7 @@ export default function App() {
         </div>
       )}
 
+      {/* ================= TAB 4: MANAGEMENT STATS ================= */}
       {activeTab === 'admin' && (
         <div style={{ padding: '20px 16px' }}>
           <h3 style={{ color: '#ef4444', marginBottom: '16px' }}>🛡️ Central Core System Admin</h3>
@@ -254,11 +261,12 @@ export default function App() {
             <h4>⚙️ Configuration Node Settings</h4>
             <label style={{ fontSize: '11px', color: '#64748b', display: 'block', margin: '10px 0 4px 0' }}>Network Fixed CPM Rate ($)</label>
             <input type="number" className="mob-input" defaultValue="6.00" />
-            <button className="mob-btn-primary" style={{ background: '#ef4444', color: '#fff' }} onClick={() => alert("Administration variables synced.")}>Sync Rule Parameters</button>
+            <button className="mob-btn-primary" style={{ background: '#ef4444', color: '#fff' }} onClick={() => alert("Administration environment variables synchronized safely.")}>Sync Rule Parameters</button>
           </div>
         </div>
       )}
 
+      {/* Navigation Footer */}
       <div style={{ background: '#151f32', position: 'fixed', bottom: 0, left: 0, right: 0, height: '65px', display: 'flex', borderTop: '1px solid #1e293b', zIndex: 99999 }}>
         <button className={`nav-tab-btn ${activeTab === 'home' ? 'nav-active' : ''}`} onClick={() => setActiveTab('home')}>Home</button>
         <button className={`nav-tab-btn ${activeTab === 'dash' ? 'nav-active' : ''}`} onClick={() => setActiveTab('dash')}>Console</button>
@@ -267,5 +275,5 @@ export default function App() {
 
     </div>
   );
-          }
-  
+        }
+        
