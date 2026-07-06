@@ -63,18 +63,31 @@ export default function App() {
     const currentHost = window.location.origin;
     const shortAlias = Math.random().toString(36).substring(2, 7);
     
-    // 🔗 Fixed Absolute Path: URL ke andar se destination parameters completely delete!
+    // 🔥 FIXED: Koi bada token nahi, ekdam chhota clean URL!
     const shortUrl = `${currentHost}/visit/${shortAlias}`;
 
-    const newLinkObject = { originalUrl: longUrl, shortUrl: shortUrl, alias: shortAlias, clicks: 0 };
+    const newLinkObject = { 
+      userId: user ? user.uid : "guest_user", 
+      originalUrl: longUrl, 
+      shortUrl: shortUrl, 
+      alias: shortAlias, 
+      clicks: 0 
+    };
 
-    if (user && context === 'dash') {
-      await addDoc(collection(db, "links"), { userId: user.uid, ...newLinkObject });
-      fetchUserData(user);
-    } else {
-      setHomeLinks([newLinkObject, ...homeLinks]);
+    try {
+      // 🔒 Base64 hatake data ko strictly Firestore database mein push kar rahe hain
+      await addDoc(collection(db, "links"), newLinkObject);
+      
+      if (user) {
+        fetchUserData(user);
+      } else {
+        setHomeLinks([newLinkObject, ...homeLinks]);
+      }
+      setLongUrl(''); // Clear input box
+      alert("Short link created successfully!");
+    } catch (e) {
+      alert("Database Error!");
     }
-    setLongUrl(''); 
   };
 
   return (
@@ -105,11 +118,30 @@ export default function App() {
         </div>
       )}
 
+      {/* Profile/Console login views */}
+      {activeTab === 'profile' && (
+        <div style={{ padding: '24px 16px', maxWidth: '500px', margin: '0 auto' }}>
+          {!user ? (
+            <div style={{ background: '#111827', padding: '20px', borderRadius: '12px' }}>
+              <h3 style={{ textAlign: 'center', marginBottom: '16px' }}>{isSignUp ? "Register" : "Login"}</h3>
+              <input type="email" placeholder="Email" style={{ width: '100%', padding: '12px', background: '#030712', border: '1px solid #374151', borderRadius: '8px', color: '#fff', marginBottom: '12px' }} value={email} onChange={(e) => setEmail(e.target.value)} />
+              <input type="password" placeholder="Password" style={{ width: '100%', padding: '12px', background: '#030712', border: '1px solid #374151', borderRadius: '8px', color: '#fff', marginBottom: '12px' }} value={password} onChange={(e) => setPassword(e.target.value)} />
+              <button style={{ width: '100%', padding: '12px', background: '#38bdf8', color: '#000', border: 'none', borderRadius: '8px', fontWeight: '600' }} onClick={handleAuth}>{isSignUp ? "Sign Up" : "Sign In"}</button>
+              <button style={{ background: 'none', border: 'none', color: '#94a3b8', width: '100%', marginTop: '10px' }} onClick={() => setIsSignUp(!isSignUp)}>{isSignUp ? "Login instead" : "Create account"}</button>
+            </div>
+          ) : (
+            <div style={{ background: '#111827', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
+              <h3>Logged in as {user.email}</h3>
+              <button style={{ padding: '10px 20px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '8px', marginTop: '16px' }} onClick={handleLogout}>Logout</button>
+            </div>
+          )}
+        </div>
+      )}
+
       <div style={{ background: '#111827', position: 'fixed', bottom: 0, left: 0, right: 0, height: '60px', display: 'flex', borderTop: '1px solid #1f2937' }}>
         <button style={{ flex: 1, background: 'none', border: 'none', color: '#fff' }} onClick={() => setActiveTab('home')}>Home</button>
         <button style={{ flex: 1, background: 'none', border: 'none', color: '#fff' }} onClick={() => setActiveTab('profile')}>Account</button>
       </div>
     </div>
   );
-        }
-                                    
+}
