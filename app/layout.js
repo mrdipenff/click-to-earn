@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'LG Shortener Pro',
+  title: 'Click To Earn',
   description: 'Advanced High-CPM Monetization Suite',
 }
 
