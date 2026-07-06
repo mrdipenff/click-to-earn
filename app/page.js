@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
-import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
+import { collection, addDoc, getDocs, query, where, updateDoc, doc } from 'firebase/firestore';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
@@ -17,6 +17,62 @@ export default function App() {
   const [userLinks, setUserLinks] = useState([]); 
   const [stats, setStats] = useState({ clicks: 0, earnings: 0.00 });
 
+  // 💸 Strict 4-Stage Monetization Core Bounded States
+  const [isAdSystemActive, setIsAdSystemActive] = useState(false);
+  const [stage, setStage] = useState(1);
+  const [timer, setTimer] = useState(10);
+  const [lockedTargetUrl, setLockedTargetUrl] = useState('');
+
+  // 🚀 Absolute Strict Target Parameter Grabber & Interceptor
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const currentUrl = window.location.href;
+      
+      // Strict Check: Agar URL me query strings hain tabhi trigger karega
+      if (currentUrl.includes('?go=') && currentUrl.includes('&uid=')) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const goParam = urlParams.get('go');
+        
+        if (goParam) {
+          const fetchLockedNode = async () => {
+            try {
+              const q = query(collection(db, "links"), where("alias", "==", goParam));
+              const querySnapshot = await getDocs(q);
+              
+              if (!querySnapshot.empty) {
+                const linkDoc = querySnapshot.docs[0];
+                const data = linkDoc.data();
+                
+                // 🔒 Strict Memory Variable - No exposed tokens anywhere inside document
+                setLockedTargetUrl(data.originalUrl);
+                setIsAdSystemActive(true); // Freeze interface immediately
+                setStage(1);
+                setTimer(10);
+
+                // Safe Firestore hit counter logger
+                await updateDoc(doc(db, "links", linkDoc.id), {
+                  clicks: (data.clicks || 0) + 1
+                });
+              }
+            } catch (err) {
+              console.error("Database loop block error.");
+            }
+          };
+          fetchLockedNode();
+        }
+      }
+    }
+  }, []);
+
+  // Strict Sequential Counter Clock Engine
+  useEffect(() => {
+    if (isAdSystemActive && timer > 0) {
+      const interval = setTimeout(() => setTimer(timer - 1), 1000);
+      return () => clearTimeout(interval);
+    }
+  }, [isAdSystemActive, timer]);
+
+  // Auth States Syncing
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
@@ -43,7 +99,7 @@ export default function App() {
       });
       setUserLinks(links);
       setStats({ clicks: totalClicks, earnings: totalClicks * 0.006 });
-    } catch (e) { console.log("Data sync active."); }
+    } catch (e) { console.log("Sync core operational."); }
   };
 
   const handleAuth = async () => {
@@ -70,8 +126,8 @@ export default function App() {
     const currentHost = window.location.origin;
     const shortAlias = Math.random().toString(36).substring(2, 7);
     
-    // 🔗 Ekdam saaf aur clean URL format bina kisi data leak parameter ke
-    const shortUrl = `${currentHost}/visit/${shortAlias}`;
+    // 🔗 Safe Short Clean URL Pattern using native query mappings
+    const shortUrl = `${currentHost}?go=${shortAlias}&uid=${user ? user.uid : 'guest'}`;
 
     const newLinkObject = { 
       userId: user ? user.uid : "guest_user", 
@@ -83,18 +139,121 @@ export default function App() {
 
     try {
       await addDoc(collection(db, "links"), newLinkObject);
-      
       if (user) {
         fetchUserData(user);
       } else {
         setHomeLinks([newLinkObject, ...homeLinks]);
       }
-      setLongUrl(''); // Input box box khali!
+      setLongUrl(''); 
       alert("Short link created successfully!");
-    } catch (e) {
-      alert("Database error.");
-    }
+    } catch (e) { alert("Database injection error."); }
   };
+
+  const handleNextStage = (next) => {
+    if (timer > 0) return alert("Please wait until countdown unseals.");
+    setStage(next);
+    setTimer(next === 4 ? 0 : 8);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // ================= 💸 SCREEN EXCLUSIVE: 4-STAGE REVENUE COUNTER SYSTEM =================
+  if (isAdSystemActive) {
+    return (
+      <div style={{ backgroundColor: '#090d16', color: '#fff', minHeight: '100vh', padding: '20px', fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        
+        {/* TOP AD CONTAINER PLACEHOLDER */}
+        <div style={{ width: '100%', maxWidth: '360px', height: '100px', background: '#111827', border: '1px dashed #4b5563', borderRadius: '8px', display: 'flex', alignItems: 'center', justifycontent: 'center', color: '#6b7280', fontSize: '11px', marginBottom: '20px', padding: '10px', boxSizing: 'border-box' }}>
+          🌐 [Adsterra Banner Script Placement #1]
+        </div>
+
+        {/* STAGE 1 TERMINAL */}
+        {stage === 1 && (
+          <div style={{ background: '#111827', border: '1px solid #1f2937', padding: '24px', borderRadius: '16px', width: '100%', maxWidth: '360px', textAlign: 'center' }}>
+            <span style={{ color: '#38bdf8', fontSize: '11px', fontWeight: '700' }}>STEP 1 OF 4</span>
+            <h3 style={{ margin: '10px 0' }}>Bypassing Security Tunnel...</h3>
+            
+            {timer > 0 ? (
+              <div style={{ padding: '12px 24px', background: '#1f2937', borderRadius: '30px', color: '#38bdf8', fontWeight: '700', display: 'inline-block' }}>
+                ⌛ Please Wait: {timer}s
+              </div>
+            ) : (
+              <div>
+                <div style={{ height: '160px', background: '#090d16', margin: '15px 0', border: '1px dashed #374151', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4b5563' }}>[Ad Unit]</div>
+                <button onClick={() => handleNextStage(2)} style={{ width: '100%', padding: '14px', background: '#38bdf8', color: '#000', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>
+                  NEXT PAGE ➡️
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* STAGE 2 TERMINAL */}
+        {stage === 2 && (
+          <div style={{ background: '#111827', border: '1px solid #1f2937', padding: '24px', borderRadius: '16px', width: '100%', maxWidth: '360px', textAlign: 'center' }}>
+            <span style={{ color: '#a855f7', fontSize: '11px', fontWeight: '700' }}>STEP 2 OF 4</span>
+            <h3 style={{ margin: '10px 0' }}>Device Parameter Verification</h3>
+            
+            <div style={{ background: '#030712', padding: '14px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+              <input type="checkbox" checked={timer === 0} readOnly style={{ width: '18px', height: '18px' }} />
+              <span>{timer > 0 ? `Checking configurations (${timer}s)...` : "Device authentication verified."}</span>
+            </div>
+
+            {timer === 0 && (
+              <div>
+                <div style={{ height: '160px', background: '#090d16', margin: '15px 0', border: '1px dashed #374151', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4b5563' }}>[Ad Unit]</div>
+                <button onClick={() => handleNextStage(3)} style={{ width: '100%', padding: '14px', background: '#a855f7', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>
+                  CONTINUE STEP 🔓
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* STAGE 3 TERMINAL */}
+        {stage === 3 && (
+          <div style={{ background: '#111827', border: '1px solid #1f2937', padding: '24px', borderRadius: '16px', width: '100%', maxWidth: '360px', textAlign: 'center' }}>
+            <span style={{ color: '#f59e0b', fontSize: '11px', fontWeight: '700' }}>STEP 3 OF 4</span>
+            <h3 style={{ margin: '10px 0' }}>Syncing Target Nodes</h3>
+
+          {timer > 0 ? (
+            <div style={{ color: '#f59e0b', fontSize: '14px', padding: '10px', background: 'rgba(245,158,11,0.05)', borderRadius: '8px' }}>
+              Compiling cloud data loops: {timer}s
+            </div>
+          ) : (
+            <div>
+              <div style={{ height: '160px', background: '#090d16', margin: '15px 0', border: '1px dashed #374151', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4b5563' }}>[Ad Unit]</div>
+              <button onClick={() => handleNextStage(4)} style={{ width: '100%', padding: '14px', background: '#f59e0b', color: '#000', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>
+                VERIFY CAP NODE 🛡️
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* STAGE 4 TERMINAL */}
+      {stage === 4 && (
+        <div style={{ background: '#111827', border: '1px solid #1f2937', padding: '24px', borderRadius: '16px', width: '100%', maxWidth: '360px', textAlign: 'center' }}>
+          <span style={{ color: '#10b981', fontSize: '11px', fontWeight: '700' }}>FINAL UNSEAL</span>
+          <h3 style={{ margin: '10px 0' }}>Link Generation Approved!</h3>
+          <p style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '20px' }}>Target destination stream unlocked successfully.</p>
+
+          <button 
+            onClick={() => { if (lockedTargetUrl) window.location.href = lockedTargetUrl; }}
+            style={{ width: '100%', padding: '16px', background: '#10b981', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '15px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)' }}
+          >
+            🚀 GET ORIGINAL LINK
+          </button>
+        </div>
+      )}
+
+      {/* BOTTOM AD CONTAINER PLACEHOLDER */}
+      <div style={{ width: '100%', maxWidth: '360px', height: '250px', background: '#111827', border: '1px dashed #4b5563', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6b7280', fontSize: '11px', marginTop: '20px' }}>
+        🌐 [Adsterra Large Footer Square Slot]
+      </div>
+
+    </div>
+  );
+}
 
   return (
     <div style={{ backgroundColor: '#090d16', color: '#f1f5f9', minHeight: '100vh', fontFamily: 'sans-serif', paddingBottom: '90px' }}>
@@ -106,7 +265,7 @@ export default function App() {
         .tab-bar-item { flex: 1; background: none; border: none; color: #94a3b8; font-size: 12px; font-weight: 500; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; }
       `}} />
 
-      <div style={{ background: '#111827', padding: '16px 20px', display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #1f2937' }}>
+      <div style={{ background: '#111827', padding: '16px 20px', display: 'flex', justifycontent: 'space-between', borderBottom: '1px solid #1f2937' }}>
         <span style={{ fontSize: '18px', fontWeight: '700', color: '#38bdf8' }}>LG SHORTENER PRO</span>
       </div>
 
@@ -122,7 +281,7 @@ export default function App() {
             <div className="saas-card">
               <h4 style={{ margin: '0 0 12px 0' }}>📋 Shortened History</h4>
               {homeLinks.map((l, i) => (
-                <div key={i} style={{ background: '#030712', padding: '12px', border: '1px solid #1f2937', borderRadius: '8px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div key={i} style={{ background: '#030712', padding: '12px', border: '1px solid #1f2937', borderRadius: '8px', marginBottom: '8px', display: 'flex', justifycontent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: '#38bdf8', fontSize: '13px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '70%' }}>{l.shortUrl}</span>
                   <button onClick={() => { navigator.clipboard.writeText(l.shortUrl); alert("Copied!"); }} style={{ background: '#38bdf8', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', color: '#000' }}>Copy</button>
                 </div>
@@ -166,7 +325,7 @@ export default function App() {
           <div className="saas-card">
             <h4 style={{ margin: '0 0 14px 0' }}>📁 Managed Active Cloud Indexes</h4>
             {userLinks.map((l, index) => (
-              <div key={index} style={{ background: '#030712', padding: '12px', borderRadius: '8px', border: '1px solid #1f2937', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div key={index} style={{ background: '#030712', padding: '12px', borderRadius: '8px', border: '1px solid #1f2937', marginBottom: '10px', display: 'flex', justifycontent: 'space-between', alignItems: 'center' }}>
                 <div style={{ width: '70%', overflow: 'hidden' }}>
                   <div style={{ color: '#38bdf8', fontWeight: '600', fontSize: '13px' }}>{l.shortUrl}</div>
                   <div style={{ color: '#64748b', fontSize: '11px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{l.originalUrl}</div>
@@ -203,5 +362,4 @@ export default function App() {
       </div>
     </div>
   );
-                }
-                
+          }
